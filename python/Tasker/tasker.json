@@ -1,0 +1,31 @@
+{
+  "A": 
+  {
+    "Name": "Tasks setting Environment Variables",
+    "Module": "EnvVar.EnvVarHandlerGroup",
+    "Args":
+    {
+      "AOne": { "ValueName": "Path", "ValueData": "C:\\ninja" },
+      "ATwo": { "ValueName": "Path", "ValueData": "C:\\ninja" },
+      "AThree": {
+          "Task-A3.1": { "ValueName": "SomeRandomKey1", "ValueData": "C:\\ninja" },
+          "Task-A3.2": { "ValueName": "SomeRandomKey2", "ValueData": "C:\\ninja" } }
+    }
+  },
+  "B": 
+  {
+    "Name": "Some dummy task group",
+    "Module": "EnvVar.EnvVarHandlerGroup",
+    "Args":
+    {
+      "TaskGroup-B1": { "ValueName": "Path", "ValueData": "C:\\ninja" },
+      "TaskGroup-B2": { "ValueName": "Path", "ValueData": "C:\\ninja" },
+      "TaskGroup-B3": {
+          "Task-B3.1": { "ValueName": "Path", "ValueData": "C:\\ninja" },
+          "Task-B3.2": { "ValueName": "Path", "ValueData": "C:\\ninja" },
+          "Task-B3.3": { "ValueName": "SomeRandomKey", "ValueData": "C:\\ninja" } }
+    }
+  }
+
+}
+
