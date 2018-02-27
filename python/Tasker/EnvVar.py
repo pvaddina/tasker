@@ -12,7 +12,7 @@ import utils
 class CEnvVar(Interfaces.IExecutableTask): 
     regPath = r'SYSTEM\CurrentControlSet\Control\Session Manager\Environment'
     reg = ConnectRegistry(None, HKEY_LOCAL_MACHINE) 
-    key = OpenKey(reg, regPath, 0, KEY_ALL_ACCESS)    # Handle to the registry item         
+    key = OpenKey(reg, regPath, 0, KEY_ALL_ACCESS)    # Handle to the registry item
 
     def __init__(self, n): 
         self.__ValueName = n
@@ -78,7 +78,7 @@ class CEnvVar(Interfaces.IExecutableTask):
         win32gui.SendMessage(win32con.HWND_BROADCAST, win32con.WM_SETTINGCHANGE, 0, 'Environment') 
 
     def DummyExecute(self): 
-        print("Command Executed")
+        print("Dummy Command Execution")
 
 
 class CPathEnvVar(CEnvVar):
@@ -111,7 +111,7 @@ class CPathEnvVar(CEnvVar):
         return True
     
 
-class EnvVarTask(Interfaces.ITask):
+class EnvVarTask(Interfaces.ISingleTask):
     def __init__(self, depth, dictTaskConfig):
         #pprint(dictTaskConfig)
         self.__taskConfig = dictTaskConfig
@@ -167,12 +167,8 @@ class EnvVarTask(Interfaces.ITask):
             
     def Execute(self):
         for subTask in self.__subTasks:
-            subTask.Execute()
-            
-    def DummyExecute(self):
-        for subTask in self.__subTasks:
             subTask.DummyExecute()
-    
+                
 
 class EnvVarTaskGroup(Interfaces.ITaskGroup):
     def __init__(self, depth, dictTaskGrpConfig):
@@ -186,35 +182,20 @@ class EnvVarTaskGroup(Interfaces.ITaskGroup):
             self.__Tasks.append(EnvVarTask(taskDepth, singleTaskDef))
             
     def Interact(self):
-        ret = ""
-        while(True and ret != "-"):
-            print("\n")
+        bContinue = True
+        while bContinue:            
             i = 1
+            print("")
             for key in self.__taskDefs.keys():
                 print(str(self.__depth) + "." + str(i) + ". " + key + ": " + self.__Tasks[i-1].GetInteractiveName())
                 i = i + 1
-            
-            ret = self.IterateTasks()        
-        return ret
+                
+            userChoice, bContinue = utils.GetUserInput(len(self.__Tasks))
+            if bContinue:
+                self.__Tasks[userChoice-1].Execute()
                 
          
-    def IterateTasks(self):
-        numEntries = len(self.__Tasks)
-        userChoiceStr = input("Enter your choice: ")
-        if userChoiceStr != "-":
-            userChoice = int(userChoiceStr)
-            if userChoice > numEntries:
-                print("You entered an invalid value")
-            else:
-                self.__Tasks[userChoice-1].Execute()
-            
-        return userChoiceStr
-
-
     def Print(self):
         for task in self.__Tasks:
             task.Print()
     
-    def GetTask(self):
-        x = 2
-      

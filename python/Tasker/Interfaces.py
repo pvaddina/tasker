@@ -16,11 +16,8 @@ class ITaskGroup:
     def Interact(self):
         pass
     
-    @abstractmethod
-    def GetTask(self):
-        pass
     
-class ITask:
+class ISingleTask:
     __metaclass__ = ABCMeta
     __name = "DummyName"
     
@@ -37,15 +34,7 @@ class ITask:
         pass
     
     @abstractmethod
-    def GetTask(self):
-        pass
-    
-    @abstractmethod
     def Execute(self):
-        pass
-
-    @abstractmethod
-    def DummyExecute(self):
         pass
 
 
