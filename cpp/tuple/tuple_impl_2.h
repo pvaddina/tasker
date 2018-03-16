@@ -1,21 +1,21 @@
-namespace my
+namespace MyOne
 {
   //////////////////////////////////////////////////////////
-  // Template definition
+  // 1. Template definition
   //////////////////////////////////////////////////////////
-  template <typename... Ts> struct tuple;
+  template <typename... Ts> struct Tuple;
 
   template <typename T, typename... Ts>
-  struct tuple<T, Ts...> : public tuple<Ts...>
+  struct Tuple<T, Ts...> : public Tuple<Ts...>
   {
-    tuple(T t, Ts... ts) : tuple<Ts...>(ts...), mVal(t) {}
+    Tuple(T t, Ts... ts) : Tuple<Ts...>(ts...), mVal(t) {}
     T mVal;
   };
 
   template <typename T>
-  struct tuple<T>
+  struct Tuple<T>
   {
-    tuple(T t) : mVal(t) {}
+    Tuple(T t) : mVal(t) {}
     T mVal;
   };
 
@@ -26,20 +26,17 @@ namespace my
   template <size_t i, typename... Ts> struct GetType;
 
   template <size_t i, typename T, typename... Ts> 
-  struct GetType<i, tuple<T,Ts...> > 
+  struct GetType<i, Tuple<T,Ts...> > 
   {
-    using Type = typename GetType<i-1, tuple<Ts...> >::Type;
+    using Type = typename GetType<i-1, Tuple<Ts...> >::Type;
   };
 
   template <typename T, typename... Ts>
-  struct GetType<0, tuple<T,Ts...> >
+  struct GetType<0, Tuple<T,Ts...> >
   {
     using Type = T;
   };
 
-
-  //template <size_t i, typename... Ts>
-  //using RetTyp = typename GetType<i,tuple<T,Ts...> >::Type 
 
   //////////////////////////////////////////////////////////
   // Get value at a given index
@@ -47,26 +44,27 @@ namespace my
   template <size_t i, typename... Ts> struct GetValue;
 
   template <size_t i, typename T, typename... Ts> 
-  struct GetValue<i, tuple<T,Ts...> > 
+  struct GetValue<i, Tuple<T,Ts...> > 
   {
-    static typename GetType<i,tuple<T,Ts...> >::Type Get(tuple<T,Ts...>& t)
+    static typename GetType<i,Tuple<T,Ts...> >::Type& Get(Tuple<T,Ts...>& t)
     {
-      return GetValue<i-1, tuple<Ts...> >::Get(t);
+      return GetValue<i-1, Tuple<Ts...> >::Get((Tuple<Ts...>&)t);
     }
   };
 
   template <typename T, typename... Ts>
-  struct GetValue<0, tuple<T,Ts...> >
+  struct GetValue<0, Tuple<T,Ts...> >
   {
-    static typename GetType<0,tuple<T,Ts...> >::Type Get(tuple<T,Ts...>& t)
+    static typename GetType<0,Tuple<T,Ts...> >::Type& Get(Tuple<T,Ts...>& t)
     {
-      return (static_cast<tuple<T, Ts...> >(t)).mVal;
+      return t.mVal;
     }  
   };
 
   template <size_t i, typename... Ts>
-  typename GetType<i,tuple<Ts...> >::Type Get(tuple<Ts...>& t)
+  typename GetType<i,Tuple<Ts...> >::Type& Get(Tuple<Ts...>& t)
   {
-    return GetValue<i, tuple<Ts...> >::Get(t);
+    return GetValue<i, Tuple<Ts...> >::Get(t);
   }
+
 }
