@@ -1,6 +1,7 @@
 {
   "A": 
   {
+    "TaskType": "Group",
     "Name": "Tasks setting Environment Variables",
     "Module": "EnvVar.EnvVarHandlerGroup",
     "Args":
@@ -14,6 +15,7 @@
   },
   "B": 
   {
+    "TaskType": "Group",
     "Name": "Some dummy task group",
     "Module": "EnvVar.EnvVarHandlerGroup",
     "Args":
@@ -25,7 +27,29 @@
           "Task-B3.2": { "ValueName": "Path", "ValueData": "C:\\ninja" },
           "Task-B3.3": { "ValueName": "SomeRandomKey", "ValueData": "C:\\ninja" } }
     }
+  },
+  "C": 
+  {
+    "TaskType": "Group",
+    "Name": "Yet another dummy task group",
+    "Module": "EnvVar.EnvVarHandlerGroup",
+    "Args":
+    {
+      "TaskGroup-C1": { "ValueName": "Path", "ValueData": "C:\\ninja" },
+      "TaskGroup-C2": { "ValueName": "Path", "ValueData": "C:\\ninja" },
+      "TaskGroup-C3": {
+          "TaskType": "Group",
+          "Name": "Some sub-task group with-in another task group",
+          "Module": "EnvVar.EnvVarHandlerGroup",
+          "Args":
+          {
+            "Task-C3.1": { "ValueName": "Path", "ValueData": "C:\\ninja" },
+            "Task-C3.2": { "ValueName": "Path", "ValueData": "C:\\ninja" },
+            "Task-C3.3": { "ValueName": "SomeRandomKey", "ValueData": "C:\\ninja" }
+          }
+    }
   }
+
 
 }
 

@@ -168,34 +168,3 @@ class EnvVarTask(Interfaces.ISingleTask):
     def Execute(self):
         for subTask in self.__subTasks:
             subTask.DummyExecute()
-                
-
-class EnvVarTaskGroup(Interfaces.ITaskGroup):
-    def __init__(self, depth, dictTaskGrpConfig):
-        self.__Tasks = []
-        self.__depth = str(depth)
-        self.__taskDefs = dictTaskGrpConfig
-        
-        i = 1
-        for singleTaskDef in self.__taskDefs.values():
-            taskDepth = str(depth) + "." + str(i) 
-            self.__Tasks.append(EnvVarTask(taskDepth, singleTaskDef))
-            
-    def Interact(self):
-        bContinue = True
-        while bContinue:            
-            i = 1
-            print("")
-            for key in self.__taskDefs.keys():
-                print(str(self.__depth) + "." + str(i) + ". " + key + ": " + self.__Tasks[i-1].GetInteractiveName())
-                i = i + 1
-                
-            userChoice, bContinue = utils.GetUserInput(len(self.__Tasks))
-            if bContinue:
-                self.__Tasks[userChoice-1].Execute()
-                
-         
-    def Print(self):
-        for task in self.__Tasks:
-            task.Print()
-    
