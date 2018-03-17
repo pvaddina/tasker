@@ -1,6 +1,6 @@
 #include <type_traits>
 
-namespace MyTwo
+namespace MyOne
 {
   //////////////////////////////////////////////////////////
   // 1. Template definition
@@ -27,17 +27,18 @@ namespace MyTwo
   //////////////////////////////////////////////////////////
   template <size_t i, typename... Ts> struct GetType;
 
-  template <size_t i, typename T, typename... Ts> 
-  struct GetType<i, Tuple<T,Ts...> > 
+  template <size_t i, typename T, typename... Ts, template <typename...> typename S>
+  struct GetType<i, S<T,Ts...> >
   {
-    using Type = typename GetType<i-1, Tuple<Ts...> >::Type;
+    using Type = typename GetType<i-1, S<Ts...> >::Type;
   };
 
-  template <typename T, typename... Ts>
-  struct GetType<0, Tuple<T,Ts...> >
+  template <typename T, typename... Ts, template <typename...> typename S>
+  struct GetType<0, S<T,Ts...> >
   {
     using Type = T;
   };
+
 
 
   //////////////////////////////////////////////////////////
