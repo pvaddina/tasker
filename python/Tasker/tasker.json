@@ -1,9 +1,8 @@
 {
-  "A": 
+  "TaskGroup-A": 
   {
-    "TaskType": "Group",
     "Name": "Tasks setting Environment Variables",
-    "Module": "EnvVar.EnvVarHandlerGroup",
+    "Module": "EnvVar.EnvVarTask",
     "Args":
     {
       "AOne": { "ValueName": "Path", "ValueData": "C:\\ninja" },
@@ -13,43 +12,39 @@
           "Task-A3.2": { "ValueName": "SomeRandomKey2", "ValueData": "C:\\ninja" } }
     }
   },
-  "B": 
+  "TaskGroup-B": 
   {
-    "TaskType": "Group",
     "Name": "Some dummy task group",
-    "Module": "EnvVar.EnvVarHandlerGroup",
+    "Module": "EnvVar.EnvVarTask",
     "Args":
     {
-      "TaskGroup-B1": { "ValueName": "Path", "ValueData": "C:\\ninja" },
-      "TaskGroup-B2": { "ValueName": "Path", "ValueData": "C:\\ninja" },
-      "TaskGroup-B3": {
+      "Task-B1": { "ValueName": "Path", "ValueData": "C:\\ninja" },
+      "Task-B2": { "ValueName": "Path", "ValueData": "C:\\ninja" },
+      "Task-B3": {
           "Task-B3.1": { "ValueName": "Path", "ValueData": "C:\\ninja" },
           "Task-B3.2": { "ValueName": "Path", "ValueData": "C:\\ninja" },
           "Task-B3.3": { "ValueName": "SomeRandomKey", "ValueData": "C:\\ninja" } }
     }
   },
-  "C": 
+  "TaskGroup-C": 
   {
-    "TaskType": "Group",
     "Name": "Yet another dummy task group",
-    "Module": "EnvVar.EnvVarHandlerGroup",
+    "Module": "EnvVar.EnvVarTask",
     "Args":
     {
-      "TaskGroup-C1": { "ValueName": "Path", "ValueData": "C:\\ninja" },
-      "TaskGroup-C2": { "ValueName": "Path", "ValueData": "C:\\ninja" },
+      "Task-C1": { "ValueName": "Path", "ValueData": "C:\\ninja" },
+      "Task-C2": { "ValueName": "Path", "ValueData": "C:\\ninja" },
       "TaskGroup-C3": {
-          "TaskType": "Group",
           "Name": "Some sub-task group with-in another task group",
-          "Module": "EnvVar.EnvVarHandlerGroup",
+          "Module": "EnvVar.EnvVarTask",
           "Args":
           {
-            "Task-C3.1": { "ValueName": "Path", "ValueData": "C:\\ninja" },
-            "Task-C3.2": { "ValueName": "Path", "ValueData": "C:\\ninja" },
-            "Task-C3.3": { "ValueName": "SomeRandomKey", "ValueData": "C:\\ninja" }
+            "Task-C3.1": { "ValueName": "Three Path", "ValueData": "C:\\ninja" },
+            "Task-C3.2": { "ValueName": "Three Path", "ValueData": "C:\\ninja" },
+            "Task-C3.3": { "ValueName": "Three SomeRandomKey", "ValueData": "C:\\ninja" }
           }
+      }
     }
   }
-
-
 }
 

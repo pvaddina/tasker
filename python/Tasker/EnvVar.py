@@ -151,7 +151,6 @@ class EnvVarTask(Interfaces.ISingleTask):
             if utils.GetUserInput(self.__Tasks) == "-":
                 break
 
-
     def GetInteractiveName(self):
         ret = "Group of tasks executed in the following order:"
         if ( len(self.__subTasks) > 1 ):
@@ -168,3 +167,7 @@ class EnvVarTask(Interfaces.ISingleTask):
     def Execute(self):
         for subTask in self.__subTasks:
             subTask.DummyExecute()
+    
+    def GetTask(self):
+        return 
+

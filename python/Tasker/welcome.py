@@ -4,10 +4,10 @@ Created on 20.01.2018
 '''
 
 import json 
-import sys 
 import EnvVar
 import utils 
 import Interfaces
+import importlib
 
 from pprint import pprint
 
@@ -20,9 +20,9 @@ class Tasker(object):
 
         depth = 1
         for value in self.__taskerConfig.values():
-            o = TaskGroup(depth, value["Args"])
+            o = TaskGroup(depth, value)
             self.__taskGroups.append(o)
-            depth = depth + 1    
+            depth = depth + 1
 
     
     def Print(self):
@@ -62,35 +62,48 @@ class TaskGroup(Interfaces.ITaskGroup):
         self.__taskDefs = dictTaskGrpConfig
         
         i = 1
-        for singleTaskDef in self.__taskDefs.values():
-            taskDepth = str(depth) + "." + str(i) 
-            self.__Tasks.append(EnvVar.EnvVarTask(taskDepth, singleTaskDef))
+        for singleTaskDef in self.__taskDefs["Args"].keys():
+            taskDepth = self.__depth + "." + str(i) 
+            val = self.__taskDefs["Args"].get(singleTaskDef, 'SHOULD NEVER HAPPEN')
+            if "TaskGroup" in singleTaskDef:
+                self.__Tasks.append(TaskGroup(taskDepth,val))
+            else:
+                modNameStr, cNameStr = (self.__taskDefs["Module"]).split(".")
+                modName = importlib.import_module(modNameStr)
+                className = getattr(modName, cNameStr)                
+                self.__Tasks.append(className(taskDepth, val))
+            i = i + 1
             
+            
+    def GetInteractiveName(self):
+        return self.__taskDefs["Name"]
+    
+    
     def Interact(self):
         bContinue = True
         while bContinue:            
-            i = 1
             print("")
-            for key in self.__taskDefs.keys():
-                print(str(self.__depth) + "." + str(i) + ". " + key + ": " + self.__Tasks[i-1].GetInteractiveName())
-                i = i + 1
+            for i in range(0,len(self.__taskDefs)):
+                print(str(self.__depth) + "." + str(i+1) + ". " + self.__Tasks[i].GetInteractiveName())
                 
             userChoice, bContinue = utils.GetUserInput(len(self.__Tasks))
             if bContinue:
                 self.__Tasks[userChoice-1].Execute()
                 
          
+    def Execute(self):
+        self.Interact()
+
+    
     def Print(self):
         for task in self.__Tasks:
             task.Print()
     
 
-
 if __name__ == '__main__': 
     t = Tasker()
     #t.Print()
     
-    t.Interact()
-    
+    t.Interact()    
     print ("Exiting ....")
 

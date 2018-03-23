@@ -5,28 +5,9 @@ Created on 21.01.2018
 
 from abc import ABCMeta, abstractmethod
 
-class ITaskGroup:
-    __metaclass__ = ABCMeta
-    
+class ITaskGroup(metaclass=ABCMeta):
     @abstractmethod
     def Print(self):
-        pass
-    
-    @abstractmethod
-    def Interact(self):
-        pass
-    
-    
-class ISingleTask:
-    __metaclass__ = ABCMeta
-    __name = "DummyName"
-    
-    @abstractmethod
-    def Print(self):
-        pass
-    
-    @abstractmethod
-    def Interact(self):
         pass
     
     @abstractmethod
@@ -34,12 +15,39 @@ class ISingleTask:
         pass
     
     @abstractmethod
+    def Interact(self):
+        pass
+    
+    @abstractmethod
     def Execute(self):
+        pass
+    
+    
+class ISingleTask(metaclass=ABCMeta):
+    __name = "DummyName"
+    
+    @abstractmethod
+    def Print(self):
+        pass
+    
+    @abstractmethod
+    def GetInteractiveName(self):
+        pass
+    
+    @abstractmethod
+    def Interact(self):
+        pass
+    
+    @abstractmethod
+    def Execute(self):
+        pass
+    
+    @abstractmethod
+    def GetTask(self):
         pass
 
 
-class IExecutableTask:
-    __metaclass__ = ABCMeta
+class IExecutableTask(metaclass=ABCMeta):
     __name = "DummyName"
     
     @abstractmethod
