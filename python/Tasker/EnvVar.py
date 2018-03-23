@@ -118,6 +118,7 @@ class EnvVarTask(Interfaces.ISingleTask):
         self.__depth = str(depth)
         self.__subTasks = []
         self.IterateAndCreateTasks(dictTaskConfig)
+
               
     def IterateAndCreateTasks(self, dictTask):
         for key in dictTask.keys():

@@ -1,7 +1,7 @@
 '''
 Created on 30.01.2018
 
-@author: praka
+@author: Vaddina Prakash Rao
 '''
 def GetUserInput(numMaxEntries):
     while(True):
