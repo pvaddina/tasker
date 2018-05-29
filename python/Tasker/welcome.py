@@ -83,7 +83,7 @@ class TaskGroup(Interfaces.ITaskGroup):
         bContinue = True
         while bContinue:            
             print("")
-            for i in range(0,len(self.__taskDefs)):
+            for i in range(0,len(self.__Tasks)):
                 print(str(self.__depth) + "." + str(i+1) + ". " + self.__Tasks[i].GetInteractiveName())
                 
             userChoice, bContinue = utils.GetUserInput(len(self.__Tasks))
@@ -106,4 +106,6 @@ if __name__ == '__main__':
     
     t.Interact()    
     print ("Exiting ....")
+
+    input("")
 

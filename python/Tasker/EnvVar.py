@@ -62,12 +62,13 @@ class CEnvVar(Interfaces.IExecutableTask):
 
     def Execute(self): 
         if self.Exists(): 
-            print("\"%s\" is currently set to \"%s\"" % (self.__ValueName, self.__ValueData))
-            userChoiceStr = input("Do you want to overwrite it (\'y\' for yes, \'n\' for no) ?")
-            if (userChoiceStr.upper() == "Y"):
-                SetValueEx(self.key, self.__ValueName, 0, self.__TypeId, self.__ValueData)
-            else:
-                print("Nothing changed")
+            SetValueEx(self.key, self.__ValueName, 0, self.__TypeId, self.__ValueData)
+#            print("\"%s\" is currently set to \"%s\"" % (self.__ValueName, self.__ValueData))
+#            userChoiceStr = input("Do you want to overwrite it (\'y\' for yes, \'n\' for no) ?")
+#            if (userChoiceStr.upper() == "Y"):
+#                SetValueEx(self.key, self.__ValueName, 0, self.__TypeId, self.__ValueData)
+#            else:
+#                print("Nothing changed")
         elif self.__TypeId: 
             print("Value does not exist. Setting %s=%s" % (self.__ValueName, self.__ValueData))
             SetValueEx(self.key, self.__ValueName, 0, self.__TypeId, self.__ValueData) 
@@ -167,7 +168,7 @@ class EnvVarTask(Interfaces.ISingleTask):
             
     def Execute(self):
         for subTask in self.__subTasks:
-            subTask.DummyExecute()
+            subTask.Execute()
     
     def GetTask(self):
         return 

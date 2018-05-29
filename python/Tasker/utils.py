@@ -14,7 +14,7 @@ def GetUserInput(numMaxEntries):
                 conversion = False
                 
             if not conversion or (userChoice > numMaxEntries):
-                print("You entered an invalid value. Please re-try.")
+                pass
             else:
                 return userChoice, True
         else:
