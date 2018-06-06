@@ -5,7 +5,8 @@ Created on 21.01.2018
 
 from abc import ABCMeta, abstractmethod
 
-class ITaskGroup(metaclass=ABCMeta):
+'''
+class IWorkPackage(metaclass=ABCMeta):
     @abstractmethod
     def Print(self):
         pass
@@ -21,29 +22,21 @@ class ITaskGroup(metaclass=ABCMeta):
     @abstractmethod
     def Execute(self):
         pass
-    
+'''
     
 class ISingleTask(metaclass=ABCMeta):
     __name = "DummyName"
     
-    @abstractmethod
-    def Print(self):
-        pass
+#    @abstractmethod
+#    def Print(self):
+#        pass
     
     @abstractmethod
     def GetInteractiveName(self):
         pass
     
     @abstractmethod
-    def Interact(self):
-        pass
-    
-    @abstractmethod
     def Execute(self):
-        pass
-    
-    @abstractmethod
-    def GetTask(self):
         pass
 
 

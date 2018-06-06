@@ -12,21 +12,26 @@ import importlib
 from pprint import pprint
 
 
-class Tasker(object):
+###############################################################################
+#
+# WorkPackageHandler
+#
+###############################################################################
+class WorkPackageHandler(object):
     def __init__(self):
-        self.__taskGroups = []
+        self.__workPackages = []
         with open('tasker.json') as json_data:
             self.__taskerConfig = json.load(json_data)
 
         depth = 1
         for value in self.__taskerConfig.values():
-            o = TaskGroup(depth, value)
-            self.__taskGroups.append(o)
+            o = WorkPackage(depth, value)
+            self.__workPackages.append(o)
             depth = depth + 1
 
     
     def Print(self):
-        for task in self.__taskGroups:
+        for task in self.__workPackages:
             task.Print()
     
     
@@ -45,33 +50,37 @@ class Tasker(object):
         bContinue = True
         while bContinue:
             i = 1
-            print("")
             for value in self.__taskerConfig.values():
                 print(str(i) + ". " + value["Name"])
                 i = i + 1
                 
-            userChoice, bContinue = utils.GetUserInput(len(self.__taskGroups))
+            userChoice, bContinue = utils.GetUserInput(len(self.__workPackages))
             if bContinue:
-                self.__taskGroups[userChoice-1].Interact()
+                self.__workPackages[userChoice-1].Interact()
+
+            print("")
             
 
-class TaskGroup(Interfaces.ITaskGroup):
-    def __init__(self, depth, dictTaskGrpConfig):
-        self.__Tasks = []
+###############################################################################
+#
+# WorkPackage 
+#
+###############################################################################
+class WorkPackage(object):
+    def __init__(self, depth, dictWorkPackageConfig):
+        self.__Tasks = [] # Where a single task is either a "SingleTask" or "TaskGroup"
         self.__depth = str(depth)
-        self.__taskDefs = dictTaskGrpConfig
+        self.__taskDefs = dictWorkPackageConfig
         
         i = 1
-        for singleTaskDef in self.__taskDefs["Args"].keys():
+        packageMod = self.__taskDefs["Module"]
+        for singleTaskDefKey in self.__taskDefs["Args"].keys():
             taskDepth = self.__depth + "." + str(i) 
-            val = self.__taskDefs["Args"].get(singleTaskDef, 'SHOULD NEVER HAPPEN')
-            if "TaskGroup" in singleTaskDef:
-                self.__Tasks.append(TaskGroup(taskDepth,val))
+            singleTaskDefValue = self.__taskDefs["Args"].get(singleTaskDefKey, 'SHOULD NEVER HAPPEN')
+            if "TaskGroup" in singleTaskDefKey:
+                self.__Tasks.append(TaskGroup(taskDepth,singleTaskDefValue, packageMod))
             else:
-                modNameStr, cNameStr = (self.__taskDefs["Module"]).split(".")
-                modName = importlib.import_module(modNameStr)
-                className = getattr(modName, cNameStr)                
-                self.__Tasks.append(className(taskDepth, val))
+                self.__Tasks.append(SingleTask(taskDepth,singleTaskDefValue, packageMod))
             i = i + 1
             
             
@@ -82,30 +91,95 @@ class TaskGroup(Interfaces.ITaskGroup):
     def Interact(self):
         bContinue = True
         while bContinue:            
-            print("")
             for i in range(0,len(self.__Tasks)):
-                print(str(self.__depth) + "." + str(i+1) + ". " + self.__Tasks[i].GetInteractiveName())
+                print(self.__Tasks[i].GetInteractiveName())
                 
             userChoice, bContinue = utils.GetUserInput(len(self.__Tasks))
             if bContinue:
                 self.__Tasks[userChoice-1].Execute()
+
+            print("")
                 
          
-    def Execute(self):
-        self.Interact()
-
-    
     def Print(self):
         for task in self.__Tasks:
             task.Print()
     
+###############################################################################
+#
+# TaskGroup
+#
+###############################################################################
 
+class TaskGroup(object):
+    def __init__(self, depth, dictTaskGrpConfig, mod):
+        self.__tgTasks = []
+        self.__depth = str(depth)
+        self.__tgTaskDefs = dictTaskGrpConfig
+
+        if "Module" in self.__tgTaskDefs:
+            useModule = self.__tgTaskDefs["Module"]
+        else:
+            useModule = mod   # Module definition in a TaskGroup is optional, 
+                              # in which case, the one defined at the package 
+                              # level is used
+        i = 1
+        for singleTaskDefKey in self.__tgTaskDefs["Args"].keys():
+            taskDepth = self.__depth + "." + str(i) 
+            singleTaskDefValue = self.__tgTaskDefs["Args"].get(singleTaskDefKey, 'SHOULD NEVER HAPPEN')
+            self.__tgTasks.append(SingleTask(taskDepth, singleTaskDefValue, useModule))
+
+            i = i + 1
+            
+            
+    def GetInteractiveName(self):
+        p = self.__depth + " " + self.__tgTaskDefs["Name"]
+        for i in range(0,len(self.__tgTasks)):
+            p = p + "\n       " + self.__tgTasks[i].GetInteractiveName()
+        return p
+    
+
+    def Execute(self):
+        for i in range(0,len(self.__tgTasks)):
+            self.__tgTasks[i].Execute()
+
+    
+    def Print(self):
+        for task in self.__tgTasks:
+            task.Print()
+    
+
+###############################################################################
+#
+# SigleTask 
+#
+###############################################################################
+
+class SingleTask(object):
+    def __init__(self, depth, dictTask, mod):
+        self.__depth = str(depth)
+
+        modNameStr, cNameStr = mod.split(".")
+        modName = importlib.import_module(modNameStr)
+        className = getattr(modName, cNameStr)                
+        self.__singleTask = className(dictTask)
+
+    def GetInteractiveName(self):
+        return self.__depth + "." + self.__singleTask.GetInteractiveName();
+
+    def Execute(self):
+        self.__singleTask.Execute();
+
+
+###############################################################################
+#
+# __main__
+#
+###############################################################################
 if __name__ == '__main__': 
-    t = Tasker()
+    t = WorkPackageHandler()
     #t.Print()
     
     t.Interact()    
     print ("Exiting ....")
-
-    input("")
 

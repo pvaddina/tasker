@@ -1,82 +1,79 @@
 {
-  "TaskGroup":
+  "WorkPackage":
   {
       "Name": "Required changes to work with Visual studio",
       "Module": "EnvVar.EnvVarTask",
       "Args":
       {
+          "SingleTask-C1": { "ValueName": "Path", "ValueData": "C:\\ninja" },
           "TaskGroup-1":
           {
-            "Name": "Work with view c:\\cc\\vaddina_MU732558_s1",
-            "Module": "EnvVar.EnvVarTask",
-            "Args":
-            {
-              "Task-1": { "ValueName": "FSW_ROOT", "ValueData": "c:\\cc\\vaddina_MU732558_s1\\1cm_fsw_base_wm" },
-              "Task-2": { "ValueName": "THIRD_PARTY", "ValueData": "c:\\cc\\vaddina_MU732558_s1\\1cm_fsw_3rd_party_wm" }
-            }
+              "Name": "Work with view c:\\cc\\vaddina_MU732558_s1",
+              "Args":
+              {
+                  "SingleTask-1": { "ValueName": "FSW_ROOT", "ValueData": "c:\\cc\\vaddina_MU732558_s1\\1cm_fsw_base_wm" },
+                  "SingleTask-2": { "ValueName": "THIRD_PARTY", "ValueData": "c:\\cc\\vaddina_MU732558_s1\\1cm_fsw_3rd_party_wm" }
+              }
           },
           "TaskGroup-2":
           {
-            "Name": "Work with view v:",
-            "Module": "EnvVar.EnvVarTask",
-            "Args":
-            {
-              "Task-1": { "ValueName": "FSW_ROOT", "ValueData": "v:\\1cm_fsw_base_wm" },
-              "Task-2": { "ValueName": "THIRD_PARTY", "ValueData": "v:\\1cm_fsw_3rd_party_wm" }
-            }
+              "Name": "Work with view v:",
+              "Args":
+              {
+                  "SingleTask-1": { "ValueName": "FSW_ROOT", "ValueData": "v:\\1cm_fsw_base_wm" },
+                  "SingleTask-2": { "ValueName": "THIRD_PARTY", "ValueData": "v:\\1cm_fsw_3rd_party_wm" }
+              }
           },
           "TaskGroup-3":
           {
-            "Name": "Work with view w:",
-            "Module": "EnvVar.EnvVarTask",
-            "Args":
-            {
-              "Task-1": { "ValueName": "FSW_ROOT", "ValueData": "w:\\1cm_fsw_base_wm" },
-              "Task-2": { "ValueName": "THIRD_PARTY", "ValueData": "w:\\1cm_fsw_3rd_party_wm" }
-            }
+              "Name": "Work with view w:",
+              "Args":
+              {
+                  "SingleTask-1": { "ValueName": "FSW_ROOT", "ValueData": "w:\\1cm_fsw_base_wm" },
+                  "SingleTask-2": { "ValueName": "THIRD_PARTY", "ValueData": "w:\\1cm_fsw_3rd_party_wm" }
+              }
           },
           "TaskGroup-4":
           {
-            "Name": "Work with view y:",
-            "Module": "EnvVar.EnvVarTask",
-            "Args":
-            {
-              "Task-1": { "ValueName": "FSW_ROOT", "ValueData": "y:\\1cm_fsw_base_wm" },
-              "Task-2": { "ValueName": "THIRD_PARTY", "ValueData": "y:\\1cm_fsw_3rd_party_wm" }
-            }
+              "Name": "Work with view y:",
+              "Args":
+              {
+                  "SingleTask-1": { "ValueName": "FSW_ROOT", "ValueData": "y:\\1cm_fsw_base_wm" },
+                  "SingleTask-2": { "ValueName": "THIRD_PARTY", "ValueData": "y:\\1cm_fsw_3rd_party_wm" }
+              }
           },
           "TaskGroup-5":
           {
-            "Name": "Work with view z:",
-            "Module": "EnvVar.EnvVarTask",
-            "Args":
-            {
-              "Task-1": { "ValueName": "FSW_ROOT", "ValueData": "z:\\1cm_fsw_base_wm" },
-              "Task-2": { "ValueName": "THIRD_PARTY", "ValueData": "z:\\1cm_fsw_3rd_party_wm" }
-            }
+              "Name": "Work with view z:",
+              "Args":
+              {
+                  "SingleTask-1": { "ValueName": "FSW_ROOT", "ValueData": "z:\\1cm_fsw_base_wm" },
+                  "SingleTask-2": { "ValueName": "THIRD_PARTY", "ValueData": "z:\\1cm_fsw_3rd_party_wm" }
+              }
           }
       }
   },
 
 
-  "TaskGroup-Example":
+  "WorkPackage-Example":
   {
     "Name": "Dummy task group example",
     "Module": "EnvVar.EnvVarTask",
     "Args":
     {
-      "Task-C1": { "ValueName": "Path", "ValueData": "C:\\ninja" },
-      "Task-C2": { "ValueName": "Path", "ValueData": "C:\\ninja" },
-      "TaskGroup-C3": {
-          "Name": "Some sub-task group with-in another task group",
-          "Module": "EnvVar.EnvVarTask",
-          "Args":
-          {
-            "Task-C3.1": { "ValueName": "Three Path", "ValueData": "C:\\ninja" },
-            "Task-C3.2": { "ValueName": "Three Path", "ValueData": "C:\\ninja" },
-            "Task-C3.3": { "ValueName": "Three SomeRandomKey", "ValueData": "C:\\ninja" }
-          }
-      }
+        "SingleTask-C1": { "ValueName": "Path", "ValueData": "C:\\ninja" },
+        "SingleTask-C2": { "ValueName": "Path", "ValueData": "C:\\ninja" },
+        "TaskGroup-C3": 
+        {
+            "Name": "Some sub-task group with-in another task group",
+            "Module": "EnvVar.EnvVarTask",
+            "Args":
+            {
+                "SingleTask-C3.1": { "ValueName": "Three Path", "ValueData": "C:\\ninja" },
+                "SingleTask-C3.2": { "ValueName": "Three Path", "ValueData": "C:\\ninja" },
+                "SingleTask-C3.3": { "ValueName": "Three SomeRandomKey", "ValueData": "C:\\ninja" }
+            }
+        }
     }
   }
 }

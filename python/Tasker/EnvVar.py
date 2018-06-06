@@ -7,22 +7,30 @@ from winreg import *
 import win32gui, win32con  
 import Interfaces
 import utils
-#from pip._vendor.html5lib.treewalkers import pprint
+
+###############################################################################
+#
+# CEnvVar
+#
+###############################################################################
 
 class CEnvVar(Interfaces.IExecutableTask): 
-    regPath = r'SYSTEM\CurrentControlSet\Control\Session Manager\Environment'
-    reg = ConnectRegistry(None, HKEY_LOCAL_MACHINE) 
-    key = OpenKey(reg, regPath, 0, KEY_ALL_ACCESS)    # Handle to the registry item
-
     def __init__(self, n): 
-        self.__ValueName = n
-        try: 
-            self.__ValueData, self.__TypeId = QueryValueEx(self.key, n)
-            self.__Exists = True 
-        except: 
-            self.__ValueData = "ERROR! The Environment variable with the ValueName \"%s\" does not exist" % (self.__ValueName)
-            self.__TypeId = REG_SZ; # By default assign the typeid to a null-terminated string 
-            self.__Exists = False          
+        try:
+            self.regPath = r'SYSTEM\CurrentControlSet\Control\Session Manager\Environment'
+            self.reg = ConnectRegistry(None, HKEY_LOCAL_MACHINE) 
+            self.key = OpenKey(self.reg, self.regPath, 0, KEY_ALL_ACCESS)    # Handle to the registry item
+
+            self.__ValueName = n
+            try: 
+                self.__ValueData, self.__TypeId = QueryValueEx(self.key, n)
+                self.__Exists = True 
+            except: 
+                self.__ValueData = "ERROR! The Environment variable with the ValueName \"%s\" does not exist" % (self.__ValueName)
+                self.__TypeId = REG_SZ; # By default assign the typeid to a null-terminated string 
+                self.__Exists = False          
+        except:
+            print("Problem opening/accessing the registry. Make sure you start the application with administrator rights")
 
     def __del__(self): 
         CloseKey(self.key)
@@ -54,8 +62,8 @@ class CEnvVar(Interfaces.IExecutableTask):
     def Exists(self): 
         return self.__Exists;    
     
-    def Print(self):
-        print("CEnvVar for ValueName=%s, and ValueData=%s" % (self.__ValueName, self.__ValueData))
+#    def Print(self):
+#        print("CEnvVar for ValueName=%s, and ValueData=%s" % (self.__ValueName, self.__ValueData))
         
     def GetInteractiveName(self):
         return "Set \"" + self.ValueName + "\" to the value \"" + self.ValueData + "\""
@@ -81,6 +89,13 @@ class CEnvVar(Interfaces.IExecutableTask):
     def DummyExecute(self): 
         print("Dummy Command Execution")
 
+
+
+###############################################################################
+#
+# CPathEnvVar
+#
+###############################################################################
 
 class CPathEnvVar(CEnvVar):
     def __init__(self):
@@ -112,64 +127,26 @@ class CPathEnvVar(CEnvVar):
         return True
     
 
-class EnvVarTask(Interfaces.ISingleTask):
-    def __init__(self, depth, dictTaskConfig):
-        #pprint(dictTaskConfig)
-        self.__taskConfig = dictTaskConfig
-        self.__depth = str(depth)
-        self.__subTasks = []
-        self.IterateAndCreateTasks(dictTaskConfig)
+###############################################################################
+#
+# EnvVarTask
+#
+###############################################################################
 
-              
-    def IterateAndCreateTasks(self, dictTask):
-        for key in dictTask.keys():
-            keyval = dictTask[key]
-            # print("Key=%s and KeyVal=%s" % (key, keyval))
-            if key == "ValueName":
-                valuename = keyval
-                valuedata = dictTask["ValueData"]
-                self.CreateSingleTask(valuename, valuedata)
-            elif type(keyval) is dict:
-                self.IterateAndCreateTasks(keyval)
-        
-    def CreateSingleTask(self, valuename, valuedata):
-        #print("ValueName=%s, ValueData=%s" % (valuename, valuedata))
-        if (valuename == "Path" or valuename == "PATH"):
-            p = CPathEnvVar()
-            p.AppendValue(valuedata)
-            self.__subTasks.append(p);
+class EnvVarTask(Interfaces.ISingleTask):
+    def __init__(self, dictTask):
+        vName = dictTask["ValueName"]
+        vData = dictTask["ValueData"]
+        if (vName == "Path" or vName == "PATH"):
+            self.__subTask = CPathEnvVar()
+            self.__subTask.AppendValue(vData)
         else:
-            p = CEnvVar(valuename)
-            p.ValueData = valuedata
-            self.__subTasks.append(p)    
-    
-    def Interact(self):
-        while(True):
-            i = 1
-            for key in self.__taskConfig.keys():
-                print(self.__depth + "." + str(i) + ": " + key)
-                i = i + 1
-        
-            if utils.GetUserInput(self.__Tasks) == "-":
-                break
+            self.__subTask = CEnvVar(vName)
+            self.__subTask.ValueData = vData
 
     def GetInteractiveName(self):
-        ret = "Group of tasks executed in the following order:"
-        if ( len(self.__subTasks) > 1 ):
-            for task in self.__subTasks:
-                ret = ret + "\n        " + task.GetInteractiveName()
-        else:
-            ret = self.__subTasks[0].GetInteractiveName()
-        return ret
+        return self.__subTask.GetInteractiveName()
 
-    def Print(self):
-        for subTask in self.__subTasks:
-            subTask.Print()
-            
     def Execute(self):
-        for subTask in self.__subTasks:
-            subTask.Execute()
+        self.__subTask.Execute()
     
-    def GetTask(self):
-        return 
-
