@@ -16,6 +16,7 @@ def GetUserInput(numMaxEntries):
             if not conversion or (userChoice > numMaxEntries):
                 pass
             else:
+                print("") # Add a new line
                 return userChoice, True
         else:
             break
