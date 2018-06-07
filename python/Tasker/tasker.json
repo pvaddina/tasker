@@ -5,50 +5,85 @@
       "Module": "EnvVar.EnvVarTask",
       "Args":
       {
-          "SingleTask-C1": { "ValueName": "Path", "ValueData": "C:\\ninja" },
-          "TaskGroup-1":
+          "SingleTask-1": { "ValueName": "Path", "ValueData": "C:\\ninja" },
+          "TaskContainer-2":
           {
-              "Name": "Work with view c:\\cc\\vaddina_MU732558_s1",
+              "Name": "Work with Dynamic views",
               "Args":
               {
-                  "SingleTask-1": { "ValueName": "FSW_ROOT", "ValueData": "c:\\cc\\vaddina_MU732558_s1\\1cm_fsw_base_wm" },
-                  "SingleTask-2": { "ValueName": "THIRD_PARTY", "ValueData": "c:\\cc\\vaddina_MU732558_s1\\1cm_fsw_3rd_party_wm" }
-              }
-          },
-          "TaskGroup-2":
-          {
-              "Name": "Work with view v:",
-              "Args":
-              {
-                  "SingleTask-1": { "ValueName": "FSW_ROOT", "ValueData": "v:\\1cm_fsw_base_wm" },
-                  "SingleTask-2": { "ValueName": "THIRD_PARTY", "ValueData": "v:\\1cm_fsw_3rd_party_wm" }
+                  "SingleTask-2.1": { "ValueName": "FSW_ROOT", "ValueData": "v:\\1cm_fsw_base_wm" },
+                  "SingleTask-2.2": { "ValueName": "THIRD_PARTY", "ValueData": "v:\\1cm_fsw_3rd_party_wm" },
+                  "SingleTask-2.3": { "ValueName": "FSW_ROOT", "ValueData": "w:\\1cm_fsw_base_wm" },
+                  "SingleTask-2.4": { "ValueName": "THIRD_PARTY", "ValueData": "w:\\1cm_fsw_3rd_party_wm" },
+                  "SingleTask-2.5": { "ValueName": "FSW_ROOT", "ValueData": "z:\\1cm_fsw_base_wm" },
+                  "SingleTask-2.6": { "ValueName": "THIRD_PARTY", "ValueData": "z:\\1cm_fsw_3rd_party_wm" }
               }
           },
           "TaskGroup-3":
           {
-              "Name": "Work with view w:",
+              "Name": "Work with view c:\\cc\\vaddina_MU732558_s1",
               "Args":
               {
-                  "SingleTask-1": { "ValueName": "FSW_ROOT", "ValueData": "w:\\1cm_fsw_base_wm" },
-                  "SingleTask-2": { "ValueName": "THIRD_PARTY", "ValueData": "w:\\1cm_fsw_3rd_party_wm" }
+                  "SingleTask-3.1": { "ValueName": "FSW_ROOT", "ValueData": "c:\\cc\\vaddina_MU732558_s1\\1cm_fsw_base_wm" },
+                  "SingleTask-3.2": { "ValueName": "THIRD_PARTY", "ValueData": "c:\\cc\\vaddina_MU732558_s1\\1cm_fsw_3rd_party_wm" }
               }
           },
           "TaskGroup-4":
           {
-              "Name": "Work with view y:",
+              "Name": "Work with view v:",
               "Args":
               {
-                  "SingleTask-1": { "ValueName": "FSW_ROOT", "ValueData": "y:\\1cm_fsw_base_wm" },
-                  "SingleTask-2": { "ValueName": "THIRD_PARTY", "ValueData": "y:\\1cm_fsw_3rd_party_wm" }
+                  "SingleTask-4.1": { "ValueName": "FSW_ROOT", "ValueData": "v:\\1cm_fsw_base_wm" },
+                  "SingleTask-4.2": { "ValueName": "THIRD_PARTY", "ValueData": "v:\\1cm_fsw_3rd_party_wm" }
               }
           },
           "TaskGroup-5":
           {
+              "Name": "Work with view w:",
+              "Args":
+              {
+                  "SingleTask-5.1": { "ValueName": "FSW_ROOT", "ValueData": "w:\\1cm_fsw_base_wm" },
+                  "SingleTask-5.2": { "ValueName": "THIRD_PARTY", "ValueData": "w:\\1cm_fsw_3rd_party_wm" }
+              }
+          },
+          "TaskContainer-6":
+          {
+              "Name": "Work with Other views",
+              "Args":
+              {
+                  "SingleTask-6.1": { "ValueName": "FSW_ROOT", "ValueData": "v:\\1cm_fsw_base_wm" },
+                  "SingleTask-6.2": { "ValueName": "THIRD_PARTY", "ValueData": "v:\\1cm_fsw_3rd_party_wm" },
+                  "SingleTask-6.3": { "ValueName": "FSW_ROOT", "ValueData": "z:\\1cm_fsw_base_wm" },
+                  "SingleTask-6.4": { "ValueName": "THIRD_PARTY", "ValueData": "z:\\1cm_fsw_3rd_party_wm" },
+                  "TaskContainer-6.5":
+                  {
+                      "Name": "Work with Other views",
+                      "Args":
+                      {
+                          "SingleTask-6.5.1": { "ValueName": "FSW_ROOT", "ValueData": "v:\\1cm_fsw_base_wm" },
+                          "SingleTask-6.5.2": { "ValueName": "THIRD_PARTY", "ValueData": "v:\\1cm_fsw_3rd_party_wm" },
+                          "SingleTask-6.5.3": { "ValueName": "FSW_ROOT", "ValueData": "z:\\1cm_fsw_base_wm" },
+                          "SingleTask-6.5.4": { "ValueName": "THIRD_PARTY", "ValueData": "z:\\1cm_fsw_3rd_party_wm" }
+                      }
+                  }
+              }
+          },
+          "TaskGroup-7":
+          {
+              "Name": "Work with view y:",
+              "Args":
+              {
+                  "SingleTask-7.1": { "ValueName": "FSW_ROOT", "ValueData": "y:\\1cm_fsw_base_wm" },
+                  "SingleTask-7.2": { "ValueName": "THIRD_PARTY", "ValueData": "y:\\1cm_fsw_3rd_party_wm" }
+              }
+          },
+          "TaskGroup-8":
+          {
               "Name": "Work with view z:",
               "Args":
               {
-                  "SingleTask-1": { "ValueName": "FSW_ROOT", "ValueData": "z:\\1cm_fsw_base_wm" },
-                  "SingleTask-2": { "ValueName": "THIRD_PARTY", "ValueData": "z:\\1cm_fsw_3rd_party_wm" }
+                  "SingleTask-8.1": { "ValueName": "FSW_ROOT", "ValueData": "z:\\1cm_fsw_base_wm" },
+                  "SingleTask-8.2": { "ValueName": "THIRD_PARTY", "ValueData": "z:\\1cm_fsw_3rd_party_wm" }
               }
           }
       }

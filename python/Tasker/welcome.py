@@ -77,7 +77,9 @@ class WorkPackage(object):
         for singleTaskDefKey in self.__taskDefs["Args"].keys():
             taskDepth = self.__depth + "." + str(i) 
             singleTaskDefValue = self.__taskDefs["Args"].get(singleTaskDefKey, 'SHOULD NEVER HAPPEN')
-            if "TaskGroup" in singleTaskDefKey:
+            if "TaskContainer" in singleTaskDefKey:
+                self.__Tasks.append(TaskContainer(taskDepth,singleTaskDefValue, packageMod))
+            elif "TaskGroup" in singleTaskDefKey:
                 self.__Tasks.append(TaskGroup(taskDepth,singleTaskDefValue, packageMod))
             else:
                 self.__Tasks.append(SingleTask(taskDepth,singleTaskDefValue, packageMod))
@@ -107,6 +109,65 @@ class WorkPackage(object):
     
 ###############################################################################
 #
+# TaskContainer
+#
+###############################################################################
+
+class TaskContainer(object):
+    def __init__(self, depth, dictTaskContainer, mod):
+        self.__tcTasks = []
+        self.__depth = str(depth)
+        self.__tcTaskDefs = dictTaskContainer
+
+        if "Module" in self.__tcTaskDefs:
+            containerMod = self.__tcTaskDefs["Module"]
+        else:
+            containerMod = mod   # Module definition in a TaskContainer is optional, 
+                              # in which case, the one defined at the package 
+                              # level is used
+        i = 1
+        for singleTaskDefKey in self.__tcTaskDefs["Args"].keys():
+            taskDepth = self.__depth + "." + str(i) 
+            singleTaskDefValue = self.__tcTaskDefs["Args"].get(singleTaskDefKey, 'SHOULD NEVER HAPPEN')
+            if "TaskContainer" in singleTaskDefKey:
+                self.__tcTasks.append(TaskContainer(taskDepth, singleTaskDefValue, containerMod))
+            elif "TaskGroup" in singleTaskDefKey:
+                self.__tcTasks.append(TaskGroup(taskDepth, singleTaskDefValue, containerMod))
+            else:
+                self.__tcTasks.append(SingleTask(taskDepth, singleTaskDefValue, containerMod))
+            i = i + 1
+            
+            
+    def GetInteractiveName(self):
+        p = self.__depth + " [CONTAINER]" + self.__tcTaskDefs["Name"]
+#        for i in range(0,len(self.__tcTasks)):
+#            p = p + "\n       " + self.__tcTasks[i].GetInteractiveName()
+        return p
+    
+
+    def Execute(self):
+#        for i in range(0,len(self.__tcTasks)):
+#            self.__tcTasks[i].Execute()
+        bContinue = True
+        while bContinue:            
+            for i in range(0,len(self.__tcTasks)):
+                print(self.__tcTasks[i].GetInteractiveName())
+                
+            userChoice, bContinue = utils.GetUserInput(len(self.__tcTasks))
+            if bContinue:
+                self.__tcTasks[userChoice-1].Execute()
+
+            print("")
+                
+
+    
+    def Print(self):
+        for tc in self.__tcTasks:
+            tc.Print()
+    
+
+###############################################################################
+#
 # TaskGroup
 #
 ###############################################################################
@@ -133,7 +194,7 @@ class TaskGroup(object):
             
             
     def GetInteractiveName(self):
-        p = self.__depth + " " + self.__tgTaskDefs["Name"]
+        p = self.__depth + " [GROUP]" + self.__tgTaskDefs["Name"]
         for i in range(0,len(self.__tgTasks)):
             p = p + "\n       " + self.__tgTasks[i].GetInteractiveName()
         return p
