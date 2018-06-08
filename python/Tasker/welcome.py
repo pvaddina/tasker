@@ -11,6 +11,9 @@ import importlib
 
 from pprint import pprint
 
+from colorama import init, Fore, Back, Style
+init(autoreset=True) # The init function for Colorama
+
 
 ###############################################################################
 #
@@ -51,7 +54,7 @@ class WorkPackageHandler(object):
         while bContinue:
             i = 1
             for value in self.__taskerConfig.values():
-                print(str(i) + ". " + value["Name"])
+                print(Style.BRIGHT + Fore.WHITE + str(i) + ". " + value["Name"])
                 i = i + 1
                 
             userChoice, bContinue = utils.GetUserInput(len(self.__workPackages))
@@ -94,7 +97,7 @@ class WorkPackage(object):
         bContinue = True
         while bContinue:            
             for i in range(0,len(self.__Tasks)):
-                print(self.__Tasks[i].GetInteractiveName())
+                print(Style.BRIGHT + Fore.WHITE + self.__Tasks[i].GetInteractiveName())
                 
             userChoice, bContinue = utils.GetUserInput(len(self.__Tasks))
             if bContinue:
@@ -139,7 +142,7 @@ class TaskContainer(object):
             
             
     def GetInteractiveName(self):
-        p = self.__depth + " [CONTAINER]" + self.__tcTaskDefs["Name"]
+        p = self.__depth + ". [CONTAINER]" + self.__tcTaskDefs["Name"]
 #        for i in range(0,len(self.__tcTasks)):
 #            p = p + "\n       " + self.__tcTasks[i].GetInteractiveName()
         return p
@@ -151,7 +154,7 @@ class TaskContainer(object):
         bContinue = True
         while bContinue:            
             for i in range(0,len(self.__tcTasks)):
-                print(self.__tcTasks[i].GetInteractiveName())
+                print(Style.BRIGHT + Fore.WHITE + self.__tcTasks[i].GetInteractiveName())
                 
             userChoice, bContinue = utils.GetUserInput(len(self.__tcTasks))
             if bContinue:
@@ -194,7 +197,7 @@ class TaskGroup(object):
             
             
     def GetInteractiveName(self):
-        p = self.__depth + " [GROUP]" + self.__tgTaskDefs["Name"]
+        p = self.__depth + ". [GROUP]" + self.__tgTaskDefs["Name"]
         for i in range(0,len(self.__tgTasks)):
             p = p + "\n       " + self.__tgTasks[i].GetInteractiveName()
         return p
@@ -226,7 +229,7 @@ class SingleTask(object):
         self.__singleTask = className(dictTask)
 
     def GetInteractiveName(self):
-        return self.__depth + "." + self.__singleTask.GetInteractiveName();
+        return self.__depth + ". " + self.__singleTask.GetInteractiveName();
 
     def Execute(self):
         self.__singleTask.Execute();
@@ -242,5 +245,5 @@ if __name__ == '__main__':
     #t.Print()
     
     t.Interact()    
-    print ("Exiting ....")
+    print(Style.BRIGHT + Fore.RED + "Exiting ....")
 
