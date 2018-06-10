@@ -244,17 +244,33 @@ class SingleTask(object):
 # __main__
 #
 ###############################################################################
-if __name__ == '__main__': 
+def ReadIp():
+    result = False
+    options = {}
     if len(sys.argv) > 1:
-        configFile = sys.argv[1]
-    else:
-        configFile = "config.json"
-        print("Using the default configuration file \"" + configFile + "\"\n")
+        for i in range(1,sys.argv):
+            opts = sys.argv[i].split("=")
+            if len(opts) == 2:
+                options[opts[0][2:]] = opts[1]
 
-    if (os.path.isfile(configFile) == False):
-        print("The configuration file " + configFile + " is not found. I cannot continue")
+    if "configfile" in options:
+        cf = options["configfile"]
     else:
-        t = WorkPackageHandler(configFile)
+        cf = "config.json"
+        options["configfile"] = cf
+        print(Style.BRIGHT + Fore.MAGENTA + "Using the default configuration file \"" + cf + "\"\n")
+
+    if (os.path.isfile(cf) == True):
+        result = True
+    else:
+        print(Style.BRIGHT + Fore.RED + "The configuration file " + cf + " is not found. I cannot continue.")
+
+    return result, options
+
+if __name__ == '__main__': 
+    cont, options = ReadIp()
+    if cont:
+        t = WorkPackageHandler(options["configfile"])
         t.Interact()    
 
     print(Style.BRIGHT + Fore.RED + "Exiting ....")
