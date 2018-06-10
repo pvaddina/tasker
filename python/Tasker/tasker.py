@@ -8,6 +8,7 @@ import utils
 import importlib
 import mod_imports
 import sys
+import os.path
 
 from pprint import pprint
 
@@ -241,9 +242,17 @@ class SingleTask(object):
 #
 ###############################################################################
 if __name__ == '__main__': 
-    t = WorkPackageHandler(sys.argv[1])
-    #t.Print()
-    
-    t.Interact()    
+    if len(sys.argv) > 1:
+        configFile = sys.argv[1]
+    else:
+        configFile = "config.json"
+        print("Using the default configuration file \"" + configFile + "\"\n")
+
+    if (os.path.isfile(configFile) == False):
+        print("The configuration file " + configFile + " is not found. I cannot continue")
+    else:
+        t = WorkPackageHandler(configFile)
+        t.Interact()    
+
     print(Style.BRIGHT + Fore.RED + "Exiting ....")
 

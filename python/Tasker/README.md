@@ -2,8 +2,14 @@
 
 A simple tool in python that helps organize several tasks as groups/containers/singletasks in a configuration file (*.json format), and will let interactively execute the desired one. As a simple example: To work with Project-A you need to set the environment variables in a specific way, and again to work with Project-B, those variables need to be reset to different values. So you could simply organize the two different variants into groups in the configuration file and execute them interactively. If you think this sounds like your problem, then this tool is for you. The advantage of this tool is that it can be extended with new modules. This is not limited to environment variables alone. 
 
+# Usage
+``` python
+>> welcome.py <config-file-name>
+```
+
 # Terminology
 The following description is all you need to use the tool. Please refer to the **tasker.json** file for further details.
+
 ## SingleTask
 A single executable task. Cannot be broken down further.
 

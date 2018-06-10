@@ -14,7 +14,7 @@ import utils
 #
 ###############################################################################
 
-class CEnvVar(Interfaces.IExecutableTask): 
+class CEnvVar(object): 
     def __init__(self, n): 
         try:
             self.regPath = r'SYSTEM\CurrentControlSet\Control\Session Manager\Environment'

@@ -5,6 +5,18 @@ Created on 21.01.2018
 
 from abc import ABCMeta, abstractmethod
 
+class ISingleTask(metaclass=ABCMeta):
+    __name = "DummyName"
+    
+    @abstractmethod
+    def GetInteractiveName(self):
+        pass
+    
+    @abstractmethod
+    def Execute(self):
+        pass
+
+
 '''
 class IWorkPackage(metaclass=ABCMeta):
     @abstractmethod
@@ -22,24 +34,7 @@ class IWorkPackage(metaclass=ABCMeta):
     @abstractmethod
     def Execute(self):
         pass
-'''
     
-class ISingleTask(metaclass=ABCMeta):
-    __name = "DummyName"
-    
-#    @abstractmethod
-#    def Print(self):
-#        pass
-    
-    @abstractmethod
-    def GetInteractiveName(self):
-        pass
-    
-    @abstractmethod
-    def Execute(self):
-        pass
-
-
 class IExecutableTask(metaclass=ABCMeta):
     __name = "DummyName"
     
@@ -50,6 +45,7 @@ class IExecutableTask(metaclass=ABCMeta):
     @abstractmethod
     def DummyExecute(self):
         pass
+'''
 
 
 
