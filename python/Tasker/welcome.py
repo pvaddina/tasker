@@ -4,10 +4,10 @@ Created on 20.01.2018
 '''
 
 import json 
-import EnvVar
 import utils 
-import Interfaces
 import importlib
+import mod_imports
+import sys
 
 from pprint import pprint
 
@@ -21,9 +21,9 @@ init(autoreset=True) # The init function for Colorama
 #
 ###############################################################################
 class WorkPackageHandler(object):
-    def __init__(self):
+    def __init__(self, configFile):
         self.__workPackages = []
-        with open('tasker.json') as json_data:
+        with open(configFile) as json_data:
             self.__taskerConfig = json.load(json_data)
 
         depth = 1
@@ -142,7 +142,7 @@ class TaskContainer(object):
             
             
     def GetInteractiveName(self):
-        p = self.__depth + ". [CONTAINER]" + self.__tcTaskDefs["Name"]
+        p = self.__depth + ". [CONTAINER] " + self.__tcTaskDefs["Name"]
 #        for i in range(0,len(self.__tcTasks)):
 #            p = p + "\n       " + self.__tcTasks[i].GetInteractiveName()
         return p
@@ -197,7 +197,7 @@ class TaskGroup(object):
             
             
     def GetInteractiveName(self):
-        p = self.__depth + ". [GROUP]" + self.__tgTaskDefs["Name"]
+        p = self.__depth + ". [GROUP] " + self.__tgTaskDefs["Name"]
         for i in range(0,len(self.__tgTasks)):
             p = p + "\n       " + self.__tgTasks[i].GetInteractiveName()
         return p
@@ -241,7 +241,7 @@ class SingleTask(object):
 #
 ###############################################################################
 if __name__ == '__main__': 
-    t = WorkPackageHandler()
+    t = WorkPackageHandler(sys.argv[1])
     #t.Print()
     
     t.Interact()    

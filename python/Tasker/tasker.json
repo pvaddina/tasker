@@ -11,12 +11,21 @@
               "Name": "Work with Dynamic views",
               "Args":
               {
-                  "SingleTask-2.1": { "ValueName": "FSW_ROOT", "ValueData": "v:\\1cm_fsw_base_wm" },
-                  "SingleTask-2.2": { "ValueName": "THIRD_PARTY", "ValueData": "v:\\1cm_fsw_3rd_party_wm" },
-                  "SingleTask-2.3": { "ValueName": "FSW_ROOT", "ValueData": "w:\\1cm_fsw_base_wm" },
-                  "SingleTask-2.4": { "ValueName": "THIRD_PARTY", "ValueData": "w:\\1cm_fsw_3rd_party_wm" },
-                  "SingleTask-2.5": { "ValueName": "FSW_ROOT", "ValueData": "z:\\1cm_fsw_base_wm" },
-                  "SingleTask-2.6": { "ValueName": "THIRD_PARTY", "ValueData": "z:\\1cm_fsw_3rd_party_wm" }
+                  "SingleTask-2.1": { "ValueName": "SOURCE_DIR", "ValueData": "v:\\srcs" },
+                  "SingleTask-2.2": { "ValueName": "LIBS", "ValueData": "v:\\libs" },
+                  "SingleTask-2.3": { "ValueName": "SOURCE_DIR", "ValueData": "w:\\srcs" },
+                  "SingleTask-2.4": { "ValueName": "LIBS", "ValueData": "w:\\libs" },
+                  "SingleTask-2.5": { "ValueName": "SOURCE_DIR", "ValueData": "z:\\srcs" },
+                  "SingleTask-2.6": { "ValueName": "LIBS", "ValueData": "z:\\libs" },
+                  "TaskGroup-2.7":
+                  {
+                    "Module": "system_utils.SysExec",
+                    "Name": "Some copy operations", 
+                    "Args":
+                    {
+                      "SingleTask-2.7.1": { "Name": "Copy the recipes folder", "Cmd": "xcopy", "Args": "/s /e /i /y c:\\Users\\praka\\workspace\\recipes d:\\recipes" }
+                    }
+                  }
               }
           },
           "TaskGroup-3":
@@ -24,8 +33,8 @@
               "Name": "Work with view c:\\cc\\vaddina_MU732558_s1",
               "Args":
               {
-                  "SingleTask-3.1": { "ValueName": "FSW_ROOT", "ValueData": "c:\\cc\\vaddina_MU732558_s1\\1cm_fsw_base_wm" },
-                  "SingleTask-3.2": { "ValueName": "THIRD_PARTY", "ValueData": "c:\\cc\\vaddina_MU732558_s1\\1cm_fsw_3rd_party_wm" }
+                  "SingleTask-3.1": { "ValueName": "SOURCE_DIR", "ValueData": "c:\\cc\\vaddina_MU732558_s1\\srcs" },
+                  "SingleTask-3.2": { "ValueName": "LIBS", "ValueData": "c:\\cc\\vaddina_MU732558_s1\\libs" }
               }
           },
           "TaskGroup-4":
@@ -33,8 +42,8 @@
               "Name": "Work with view v:",
               "Args":
               {
-                  "SingleTask-4.1": { "ValueName": "FSW_ROOT", "ValueData": "v:\\1cm_fsw_base_wm" },
-                  "SingleTask-4.2": { "ValueName": "THIRD_PARTY", "ValueData": "v:\\1cm_fsw_3rd_party_wm" }
+                  "SingleTask-4.1": { "ValueName": "SOURCE_DIR", "ValueData": "v:\\srcs" },
+                  "SingleTask-4.2": { "ValueName": "LIBS", "ValueData": "v:\\libs" }
               }
           },
           "TaskGroup-5":
@@ -42,8 +51,8 @@
               "Name": "Work with view w:",
               "Args":
               {
-                  "SingleTask-5.1": { "ValueName": "FSW_ROOT", "ValueData": "w:\\1cm_fsw_base_wm" },
-                  "SingleTask-5.2": { "ValueName": "THIRD_PARTY", "ValueData": "w:\\1cm_fsw_3rd_party_wm" }
+                  "SingleTask-5.1": { "ValueName": "SOURCE_DIR", "ValueData": "w:\\srcs" },
+                  "SingleTask-5.2": { "ValueName": "LIBS", "ValueData": "w:\\libs" }
               }
           },
           "TaskContainer-6":
@@ -51,19 +60,19 @@
               "Name": "Work with Other views",
               "Args":
               {
-                  "SingleTask-6.1": { "ValueName": "FSW_ROOT", "ValueData": "v:\\1cm_fsw_base_wm" },
-                  "SingleTask-6.2": { "ValueName": "THIRD_PARTY", "ValueData": "v:\\1cm_fsw_3rd_party_wm" },
-                  "SingleTask-6.3": { "ValueName": "FSW_ROOT", "ValueData": "z:\\1cm_fsw_base_wm" },
-                  "SingleTask-6.4": { "ValueName": "THIRD_PARTY", "ValueData": "z:\\1cm_fsw_3rd_party_wm" },
+                  "SingleTask-6.1": { "ValueName": "SOURCE_DIR", "ValueData": "v:\\srcs" },
+                  "SingleTask-6.2": { "ValueName": "LIBS", "ValueData": "v:\\libs" },
+                  "SingleTask-6.3": { "ValueName": "SOURCE_DIR", "ValueData": "z:\\srcs" },
+                  "SingleTask-6.4": { "ValueName": "LIBS", "ValueData": "z:\\libs" },
                   "TaskContainer-6.5":
                   {
                       "Name": "Work with Other views",
                       "Args":
                       {
-                          "SingleTask-6.5.1": { "ValueName": "FSW_ROOT", "ValueData": "v:\\1cm_fsw_base_wm" },
-                          "SingleTask-6.5.2": { "ValueName": "THIRD_PARTY", "ValueData": "v:\\1cm_fsw_3rd_party_wm" },
-                          "SingleTask-6.5.3": { "ValueName": "FSW_ROOT", "ValueData": "z:\\1cm_fsw_base_wm" },
-                          "SingleTask-6.5.4": { "ValueName": "THIRD_PARTY", "ValueData": "z:\\1cm_fsw_3rd_party_wm" }
+                          "SingleTask-6.5.1": { "ValueName": "SOURCE_DIR", "ValueData": "v:\\srcs" },
+                          "SingleTask-6.5.2": { "ValueName": "LIBS", "ValueData": "v:\\libs" },
+                          "SingleTask-6.5.3": { "ValueName": "SOURCE_DIR", "ValueData": "z:\\srcs" },
+                          "SingleTask-6.5.4": { "ValueName": "LIBS", "ValueData": "z:\\libs" }
                       }
                   }
               }
@@ -73,8 +82,8 @@
               "Name": "Work with view y:",
               "Args":
               {
-                  "SingleTask-7.1": { "ValueName": "FSW_ROOT", "ValueData": "y:\\1cm_fsw_base_wm" },
-                  "SingleTask-7.2": { "ValueName": "THIRD_PARTY", "ValueData": "y:\\1cm_fsw_3rd_party_wm" }
+                  "SingleTask-7.1": { "ValueName": "SOURCE_DIR", "ValueData": "y:\\srcs" },
+                  "SingleTask-7.2": { "ValueName": "LIBS", "ValueData": "y:\\libs" }
               }
           },
           "TaskGroup-8":
@@ -82,8 +91,8 @@
               "Name": "Work with view z:",
               "Args":
               {
-                  "SingleTask-8.1": { "ValueName": "FSW_ROOT", "ValueData": "z:\\1cm_fsw_base_wm" },
-                  "SingleTask-8.2": { "ValueName": "THIRD_PARTY", "ValueData": "z:\\1cm_fsw_3rd_party_wm" }
+                  "SingleTask-8.1": { "ValueName": "SOURCE_DIR", "ValueData": "z:\\srcs" },
+                  "SingleTask-8.2": { "ValueName": "LIBS", "ValueData": "z:\\libs" }
               }
           }
       }

@@ -66,7 +66,7 @@ class CEnvVar(Interfaces.IExecutableTask):
 #        print("CEnvVar for ValueName=%s, and ValueData=%s" % (self.__ValueName, self.__ValueData))
         
     def GetInteractiveName(self):
-        return "Set \"" + self.ValueName + "\" to the value \"" + self.ValueData + "\""
+        return "Set environment variable as \"" + self.ValueName + "\" ==> \"" + self.ValueData + "\""
 
     def Execute(self): 
         if self.Exists(): 
