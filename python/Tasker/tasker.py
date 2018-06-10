@@ -6,7 +6,6 @@ Created on 20.01.2018
 import json 
 import utils 
 import importlib
-import mod_imports
 import sys
 import os.path
 
@@ -224,7 +223,11 @@ class SingleTask(object):
     def __init__(self, depth, dictTask, mod):
         self.__depth = str(depth)
 
-        modNameStr, cNameStr = mod.split(".")
+        modParts = mod.split(".")
+        modNameStr = modParts[0] + "." + modParts[1]
+        cNameStr = modParts[len(modParts)-1]
+        #print("modNameStr=" + modNameStr + ", cNameStr=" + cNameStr)
+        #modNameStr, cNameStr = mod.split(".")
         modName = importlib.import_module(modNameStr)
         className = getattr(modName, cNameStr)                
         self.__singleTask = className(dictTask)

@@ -5,7 +5,7 @@ Created on 20.01.2018
 
 from winreg import *
 import win32gui, win32con  
-import Interfaces
+import interfaces
 import utils
 
 ###############################################################################
@@ -133,7 +133,7 @@ class CPathEnvVar(CEnvVar):
 #
 ###############################################################################
 
-class EnvVarTask(Interfaces.ISingleTask):
+class EnvVarTask(interfaces.ISingleTask):
     def __init__(self, dictTask):
         vName = dictTask["ValueName"]
         vData = dictTask["ValueData"]

@@ -3,7 +3,7 @@ Created on 10.06.2018
 @author: Vaddina Prakash Rao
 '''
 
-import Interfaces
+import interfaces
 
 from subprocess import call
 import subprocess
@@ -14,7 +14,7 @@ import subprocess
 #
 ###############################################################################
 
-class SysExec(Interfaces.ISingleTask):
+class SysExec(interfaces.ISingleTask):
     def __init__(self, dictTask):
         self.__cmd = dictTask["Cmd"]
         self.__args = dictTask["Args"]

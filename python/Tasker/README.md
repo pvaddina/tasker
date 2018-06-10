@@ -22,9 +22,9 @@ A way to organize multiple TaskGroups/SingleTasks. The tool will interatively di
 
 # How to add a new module
 To add a new module of your own please follow these steps:
-* The class that handles your task should implement the interfaces of the class **Interfaces.ISingleTask**. The mentioned class mandates implementation of two functions only.
-* Place the module file in the same working directory
-* Import the new module in the file **mod_imports.py** 
+* The class that handles your task should implement the interfaces of the class **interfaces.ISingleTask**. The mentioned class mandates implementation of two functions only.
+* Place the new file in the directory **mods**
+* Import the new module in the package definition file **mods/__init__.py** 
 
 # Supported operating systems
 Depending on the module you may create the tool will work either in Windows only, Linux only or may be both. In the current form given all the dependencies as listed below are present, this works only under Windows.

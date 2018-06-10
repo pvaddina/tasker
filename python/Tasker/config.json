@@ -2,7 +2,7 @@
   "WorkPackage":
   {
       "Name": "Required changes to work with Visual studio",
-      "Module": "EnvVar.EnvVarTask",
+      "Module": "mods.envvar.EnvVarTask",
       "Args":
       {
           "SingleTask-1": { "ValueName": "Path", "ValueData": "C:\\ninja" },
@@ -19,7 +19,7 @@
                   "SingleTask-2.6": { "ValueName": "LIBS", "ValueData": "z:\\libs" },
                   "TaskGroup-2.7":
                   {
-                    "Module": "system_utils.SysExec",
+                    "Module": "mods.system_utils.SysExec",
                     "Name": "Some copy operations", 
                     "Args":
                     {
@@ -102,7 +102,7 @@
   "WorkPackage-Example":
   {
     "Name": "Dummy task group example",
-    "Module": "EnvVar.EnvVarTask",
+    "Module": "mods.envvar.EnvVarTask",
     "Args":
     {
         "SingleTask-C1": { "ValueName": "Path", "ValueData": "C:\\ninja" },
@@ -110,7 +110,7 @@
         "TaskGroup-C3": 
         {
             "Name": "Some sub-task group with-in another task group",
-            "Module": "EnvVar.EnvVarTask",
+            "Module": "mods.envvar.EnvVarTask",
             "Args":
             {
                 "SingleTask-C3.1": { "ValueName": "Three Path", "ValueData": "C:\\ninja" },
