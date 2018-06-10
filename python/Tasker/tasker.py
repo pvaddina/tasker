@@ -48,6 +48,17 @@ class WorkPackageHandler(object):
             print("Printing %d" % (i+1))
             pprint(taskerVals[str(i+1)])
             
+    def DirectExecute(self, liExecOpts):
+        idx = int(liExecOpts[0]) - 1
+        if idx < len(self.__workPackages):
+            del liExecOpts[0]
+            if len(liExecOpts) > 0:
+                self.__workPackages[idx].DirectExecute(liExecOpts)
+            else:
+                self.__workPackages[idx].Interact()
+        else:
+            print(Style.BRIGHT + Fore.RED + "Error!! Incorrect option. Nothing done.")
+
             
     def Interact(self):
         bContinue = True
@@ -93,6 +104,18 @@ class WorkPackage(object):
         return self.__taskDefs["Name"]
     
     
+    def DirectExecute(self, liExecOpts):
+        idx = int(liExecOpts[0]) - 1
+        if idx < len(self.__Tasks):
+            del liExecOpts[0]
+            if len(liExecOpts) > 0:
+                self.__Tasks[idx].DirectExecute(liExecOpts)
+            else:
+                self.__Tasks[idx].Execute()
+        else:
+            print(Style.BRIGHT + Fore.RED + "Error!! Incorrect option. Nothing done.")
+
+            
     def Interact(self):
         bContinue = True
         while bContinue:            
@@ -140,6 +163,18 @@ class TaskContainer(object):
                 self.__tcTasks.append(SingleTask(taskDepth, singleTaskDefValue, containerMod))
             i = i + 1
             
+            
+    def DirectExecute(self, liExecOpts):
+        idx = int(liExecOpts[0]) - 1
+        if idx < len(self.__tcTasks):
+            del liExecOpts[0]
+            if len(liExecOpts) > 0:
+                self.__tcTasks[idx].DirectExecute(liExecOpts)
+            else:
+                self.__tcTasks[idx].Execute()
+        else:
+            print(Style.BRIGHT + Fore.RED + "Error!! Incorrect option. Nothing done.")
+
             
     def GetInteractiveName(self):
         p = self.__depth + ". [CONTAINER] " + self.__tcTaskDefs["Name"]
@@ -196,6 +231,12 @@ class TaskGroup(object):
             i = i + 1
             
             
+    def DirectExecute(self, liExecOpts):
+        if len(liExecOpts) > 0:
+            print(Style.BRIGHT + Fore.RED + "Error!! Incorrect option. Nothing done.")
+        else:
+            self.Execute()
+
     def GetInteractiveName(self):
         p = self.__depth + ". [GROUP] " + self.__tgTaskDefs["Name"]
         for i in range(0,len(self.__tgTasks)):
@@ -232,6 +273,14 @@ class SingleTask(object):
         className = getattr(modName, cNameStr)                
         self.__singleTask = className(dictTask)
 
+
+    def DirectExecute(self, liExecOpts):
+        if len(liExecOpts) > 0:
+            print(Style.BRIGHT + Fore.RED + "Incorrect option. Nothing done.")
+        else:
+            self.__singleTask.Execute();
+
+
     def GetInteractiveName(self):
         return self.__depth + ". " + self.__singleTask.GetInteractiveName();
 
@@ -248,9 +297,10 @@ def ReadIp():
     result = False
     options = {}
     if len(sys.argv) > 1:
-        for i in range(1,sys.argv):
+        for i in range(1,len(sys.argv)):
             opts = sys.argv[i].split("=")
             if len(opts) == 2:
+                #print(opts[0]+ "--" + opts[1])
                 options[opts[0][2:]] = opts[1]
 
     if "configfile" in options:
@@ -267,11 +317,20 @@ def ReadIp():
 
     return result, options
 
+
+
+
 if __name__ == '__main__': 
     cont, options = ReadIp()
     if cont:
         t = WorkPackageHandler(options["configfile"])
-        t.Interact()    
+        if "exec" in options:
+            #print(options["exec"])
+            execOpts = options["exec"]
+            liExecOpts = execOpts.split(".")
+            t.DirectExecute(liExecOpts)
+        else:
+            t.Interact()    
 
-    print(Style.BRIGHT + Fore.RED + "Exiting ....")
+    print(Style.BRIGHT + Fore.GREEN + "Exiting ....")
 
