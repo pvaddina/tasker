@@ -5,13 +5,14 @@ A simple tool in python that helps organize several tasks as groups/containers/s
 ``` python
 tasker.py [--configfile=<config-file-name>] [--exec=<option>]
 ```
-* The arguments should be qualified with keywords. Currently supported keywords are:
-** configfile --> Specify a configuration file name. If this option is not present, then the default config file is taken, "config.json". When the default one is also not available, then it will not continue
-** exec --> Use this option to specify a direct command for execution. The tool will execute it and exit at the end automatically. The direct commands are specified with numerical numbers followed by '.', until the desired task is chosen. The following example will first extract the 3rd workpackage, followed by 4th task container, then the 2nd container and finally the task/taskgroup '1'. Example:  
+The arguments should be qualified with keywords. Currently supported keywords are:
+
+* configfile --> Specify a configuration file name. If this option is not present, then the default config file is taken, "config.json". When the default one is also not available, then it will not continue
+
+* exec --> Use this option to specify a direct command for execution. The tool will execute it and exit at the end automatically. The direct commands are specified with numerical numbers followed by '.', until the desired task is chosen. The following example will first extract the 3rd workpackage, followed by 4th task container, then the 2nd container and finally the task/taskgroup '1'. Example:  
 ``` python
 tasker.py --configfile=config.json --exec=3.4.2.1
 ```
-* If no config file is passed as an argument, then the default config filename, "config.json" is used
 
 # Terminology
 The following description is all you need to use the tool. Please refer to the **tasker.json** file for further details.
