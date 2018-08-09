@@ -42,25 +42,6 @@ namespace PUtils
     return s.str();
   }
 
-  // Make a empty string with the defined number of spaces
-  template <int N>
-  static std::string MkEmptyStr()
-  {
-    return std::string(" ") + MkEmptyStr<N-1>();
-  }
-
-  template <>
-  static std::string MkEmptyStr<1>()
-  {
-    return std::string(" ");
-  }
-
-  template <>
-  static std::string MkEmptyStr<0>()
-  {
-    return std::string("");
-  }
-
   // Make a string out of all the arguments and print them out on std::cout
   template <typename... Ts>
   static void POut(Ts... ts)
@@ -69,13 +50,5 @@ namespace PUtils
     std::cout << s;
   }
 
-
-  // Insert the passed number of spaces followed by the string
-  template <int N>
-  static void EOut(const std::string s)
-  {
-    std::string ident = MkEmptyStr<N>();
-    std::cout << ident << s;
-  }
 };
 

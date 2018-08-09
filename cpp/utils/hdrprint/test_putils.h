@@ -65,21 +65,6 @@ namespace Test4
   }
 }
 
-namespace Test5
-{
-  void Test5()
-  {
-    constexpr int i = 437;
-    RandomS r{437, "Rollnumber"};
-    std::cout << std::endl;
-    PUtils::EOut<4>(PUtils::MkStr("The value of i = ", i, ", not ", 34.2324, ". ", r, "(just for info)"));
-    std::cout << std::endl;
-    PUtils::EOut<10>(PUtils::MkStr("The value of i = ", i, ", not ", 34.2324, ". ", r, "(just for info)"));
-    std::cout << std::endl;
-    PUtils::EOut<0>(PUtils::MkStr("The value of i = ", i, ", not ", 34.2324, ". ", r, "(just for info)"));
-  }
-}
-
 
 
 int Printtest()
@@ -89,7 +74,6 @@ int Printtest()
   std::cout << "\n\n";
   Test3::Test3();
   Test4::Test4();
-  Test5::Test5();
   return 0;
 }
 
