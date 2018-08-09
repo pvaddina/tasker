@@ -6,8 +6,7 @@
 
 namespace VAR3
 {
-
-  static const std::string IndentSpaces[] = { 
+  static const std::string IndentSpaces[] = {
     "   ",
     "      ",
     "         ",
