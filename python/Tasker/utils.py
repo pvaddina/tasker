@@ -7,10 +7,22 @@ Created on 30.01.2018
 from colorama import init, Fore, Back, Style
 init(autoreset=True) # The init function for Colorama
 
+def NormalPrint(s):
+    print(Style.BRIGHT + Fore.WHITE + s)
+
+def HighPrint(s):
+    print(Style.BRIGHT + Fore.MAGENTA + s)
+
+def OkPrint(s):
+    print(Style.BRIGHT + Fore.GREEN + s)
+
+def ErrorPrint(s):
+    print(Style.BRIGHT + Fore.RED + s)
 
 def GetUserInput(numMaxEntries):
     while(True):
         print(Style.BRIGHT + Fore.GREEN + "Please enter your choice or '-' to go up one level: ", end='')
+        #OkPrint("Please enter your choice or '-' to go up one level: ")
         userChoiceStr = input()
         if userChoiceStr != "-":
             try:
@@ -28,5 +40,4 @@ def GetUserInput(numMaxEntries):
             break
             
     return 0, False
-
 

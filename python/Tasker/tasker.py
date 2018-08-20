@@ -11,10 +11,6 @@ import os.path
 
 from pprint import pprint
 
-from colorama import init, Fore, Back, Style
-init(autoreset=True) # The init function for Colorama
-
-
 ###############################################################################
 #
 # WorkPackageHandler
@@ -57,7 +53,7 @@ class WorkPackageHandler(object):
             else:
                 self.__workPackages[idx].Interact()
         else:
-            print(Style.BRIGHT + Fore.RED + "Error!! Incorrect option. Nothing done.")
+            utils.ErrorPrint("Error!! Incorrect option. Nothing done.")
 
             
     def Interact(self):
@@ -65,7 +61,7 @@ class WorkPackageHandler(object):
         while bContinue:
             i = 1
             for value in self.__taskerConfig.values():
-                print(Style.BRIGHT + Fore.WHITE + str(i) + ". " + value["Name"])
+                utils.NormalPrint(str(i) + ". " + value["Name"])
                 i = i + 1
                 
             userChoice, bContinue = utils.GetUserInput(len(self.__workPackages))
@@ -113,14 +109,14 @@ class WorkPackage(object):
             else:
                 self.__Tasks[idx].Execute()
         else:
-            print(Style.BRIGHT + Fore.RED + "Error!! Incorrect option. Nothing done.")
+            utils.ErrorPrint("Error!! Incorrect option. Nothing done.")
 
             
     def Interact(self):
         bContinue = True
         while bContinue:            
             for i in range(0,len(self.__Tasks)):
-                print(Style.BRIGHT + Fore.WHITE + self.__Tasks[i].GetInteractiveName())
+                utils.NormalPrint(self.__Tasks[i].GetInteractiveName())
                 
             userChoice, bContinue = utils.GetUserInput(len(self.__Tasks))
             if bContinue:
@@ -173,7 +169,7 @@ class TaskContainer(object):
             else:
                 self.__tcTasks[idx].Execute()
         else:
-            print(Style.BRIGHT + Fore.RED + "Error!! Incorrect option. Nothing done.")
+            utils.ErrorPrint("Error!! Incorrect option. Nothing done.")
 
             
     def GetInteractiveName(self):
@@ -189,7 +185,7 @@ class TaskContainer(object):
         bContinue = True
         while bContinue:            
             for i in range(0,len(self.__tcTasks)):
-                print(Style.BRIGHT + Fore.WHITE + self.__tcTasks[i].GetInteractiveName())
+                utils.NormalPrint(self.__tcTasks[i].GetInteractiveName())
                 
             userChoice, bContinue = utils.GetUserInput(len(self.__tcTasks))
             if bContinue:
@@ -233,7 +229,7 @@ class TaskGroup(object):
             
     def DirectExecute(self, liExecOpts):
         if len(liExecOpts) > 0:
-            print(Style.BRIGHT + Fore.RED + "Error!! Incorrect option. Nothing done.")
+            utils.ErrorPrint("Error!! Incorrect option. Nothing done.")
         else:
             self.Execute()
 
@@ -276,7 +272,7 @@ class SingleTask(object):
 
     def DirectExecute(self, liExecOpts):
         if len(liExecOpts) > 0:
-            print(Style.BRIGHT + Fore.RED + "Incorrect option. Nothing done.")
+            utils.ErrorPrint("Incorrect option. Nothing done.")
         else:
             self.__singleTask.Execute();
 
@@ -308,12 +304,12 @@ def ReadIp():
     else:
         cf = "config.json"
         options["configfile"] = cf
-        print(Style.BRIGHT + Fore.MAGENTA + "Using the default configuration file \"" + cf + "\"\n")
+        utils.HighPrint("Using the default configuration file \"" + cf + "\"\n")
 
     if (os.path.isfile(cf) == True):
         result = True
     else:
-        print(Style.BRIGHT + Fore.RED + "The configuration file " + cf + " is not found. I cannot continue.")
+        utils.ErrorPrint("The configuration file " + cf + " is not found. I cannot continue.")
 
     return result, options
 
@@ -329,8 +325,12 @@ if __name__ == '__main__':
             execOpts = options["exec"]
             liExecOpts = execOpts.split(".")
             t.DirectExecute(liExecOpts)
+            bWait = True
         else:
             t.Interact()    
 
-    print(Style.BRIGHT + Fore.GREEN + "Exiting ....")
+    utils.OkPrint("Exiting ....")
+
+    if "wait" in options and bool(int(options["wait"])) == True:
+        input("")
 
