@@ -25,29 +25,63 @@ namespace PUtils
   }
 #endif
 
-  // Make a string out of all the arguments passed here. Uses, std::stringstream. 
-  template <typename T>
-  static std::string MkStr(T val)
+  namespace Type1
   {
-    std::stringstream s;
-    s << val;
-    return s.str();
+    // Make a string out of all the arguments passed here. Uses, std::stringstream. 
+    template <typename T>
+    static std::string MkStr(T val)
+    {
+      std::stringstream s;
+      s << val;
+      return s.str();
+    }
+
+    template <typename T, typename... Ts>
+    static std::string MkStr(T val, Ts... ts)
+    {
+      std::stringstream s;
+      s << val << MkStr(ts...);
+      return s.str();
+    }
+
+    // Make a string out of all the arguments and print them out on std::cout
+    template <typename... Ts>
+    static void POut(Ts... ts)
+    {
+      std::string s = MkStr(ts...);
+      std::cout << s;
+    }
   }
 
-  template <typename T, typename... Ts>
-  static std::string MkStr(T val, Ts... ts)
+  namespace Type2
   {
-    std::stringstream s;
-    s << val << MkStr(ts...);
-    return s.str();
-  }
+    // Make a string out of all the arguments passed here. Uses, std::stringstream. 
+    template <typename T, typename U>
+    void PrintToSStream(T& s, U&& val)
+    {
+      s << val << " ";
+    }
 
-  // Make a string out of all the arguments and print them out on std::cout
-  template <typename... Ts>
-  static void POut(Ts... ts)
-  {
-    std::string s = MkStr(ts...);
-    std::cout << s;
+    template <typename T, typename U, typename... Ts>
+    void PrintToSStream(T& s, U&& val, Ts&&... ts)
+    {
+      s << val << " ";
+      PrintToSStream(s, ts...);
+    }
+
+    template <typename T, typename... Ts>
+    std::string Print(Ts&&... ts)
+    {
+      T s;
+      PrintToSStream(s, ts...);
+      std::cout << s.str() << std::endl;
+    }
+
+    template <typename... Ts>
+    void POut(Ts&&... ts)
+    {
+      Print<std::stringstream>(ts...);
+    }
   }
 
 };

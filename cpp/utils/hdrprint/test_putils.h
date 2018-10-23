@@ -5,7 +5,7 @@ namespace Test1
 {
   void Test1()
   {
-    std::string s = PUtils::MkStr(23, 'x', "some string");
+    std::string s = PUtils::Type1::MkStr("Test1", 23, 'x', "some string");
     std::cout << s << std::endl;
   }
 }
@@ -14,8 +14,10 @@ namespace Test2
 {
   void Test2()
   {
-    PUtils::POut(23, 'x', "some string\n");
-    PUtils::POut(23);
+    PUtils::Type1::POut("Test2-", 23, 'x', "some string\n");
+    PUtils::Type1::POut("Test2-", 23);
+
+    PUtils::Type2::POut("Test2-", 23, 'x', "some string\n");
   }
 }
 
@@ -51,7 +53,7 @@ namespace Test3
   void Test3()
   {
     RandomS r{437, "Rollnumber"};
-    PUtils::POut(23, 'x', r, "some string\n");
+    PUtils::Type1::POut(23, 'x', r, "some string\n");
   }
 }
 
@@ -61,7 +63,7 @@ namespace Test4
   {
     constexpr int i = 437;
     RandomS r{437, "Rollnumber"};
-    PUtils::POut("The value of i = ", i, ", not ", 34.2324, r, "(just for info)");
+    PUtils::Type1::POut("The value of i = ", i, ", not ", 34.2324, r, "(just for info)");
   }
 }
 

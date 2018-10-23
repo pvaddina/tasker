@@ -3,7 +3,7 @@ A simple tool in python that helps organize several tasks as groups/containers/s
 
 # Usage
 ``` python
-tasker.py [--configfile=<config-file-name>] [--exec=<option>]
+tasker.py [--configfile=<config-file-name>] [--exec=<option>] [--wait=<True/False>]
 ```
 The arguments should be qualified with keywords. Currently supported keywords are:
 
