@@ -293,7 +293,6 @@ def ReadIp():
     result = None
     options = {}
     if len(sys.argv) > 1:
-        
         if "--help" in sys.argv or "--Help" in sys.argv or "--HELP" in sys.argv:
             utils.OkPrint("Usage:")
             utils.OkPrint("      tasker.py [--configfile=<config-file-name>] [--exec=<option>] [--wait=<True/False>]")
@@ -304,17 +303,17 @@ def ReadIp():
                     #print(opts[0]+ "--" + opts[1])
                     options[opts[0][2:]] = opts[1]
 
-            if "configfile" in options:
-                cf = options["configfile"]
-            else:
-                cf = "config.json"
-                options["configfile"] = cf
-                utils.HighPrint("Using the default configuration file \"" + cf + "\"\n")
+    if "configfile" in options:
+        cf = options["configfile"]
+    else:
+        cf = "config.json"
+        options["configfile"] = cf
+        utils.HighPrint("Using the default configuration file \"" + cf + "\"\n")
 
-            if (os.path.isfile(cf) == True):
-                result = True
-            else:
-                utils.ErrorPrint("The configuration file " + cf + " is not found. I cannot continue.")
+    if (os.path.isfile(cf) == True):
+        result = True
+    else:
+        utils.ErrorPrint("The configuration file " + cf + " is not found. I cannot continue.")
 
     return result, options
 
