@@ -1,0 +1,11 @@
+*.swp
+*.*~
+*.exe
+*.out
+*.obj
+*.ORIG
+*.orig
+
+build/
+ninja/
+vs/
