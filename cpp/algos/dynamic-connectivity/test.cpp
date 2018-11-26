@@ -1,10 +1,13 @@
 #include "quick-find.h"
 #include "quick-union.h"
+#include "quick-union-weighted.h"
+#include "quick-union-wt-pcomp.h"
+
 
 template <typename T>
 void test_quick_find()
 {
-  std::cout << "###################### Quick Find tests ########################\n";
+  std::cout << "#######################################################\n";
   T qf{10};
 
   qf.Union(4,3);
@@ -45,6 +48,8 @@ int main()
 {
   test_quick_find<AG::QuickFind>();
   test_quick_find<AG::QuickUnion>();
+  test_quick_find<AG::QuickUnionWeighted>();
+  test_quick_find<AG::QuickUnionWtPathComp>();
 
   return 0;
 }

@@ -20,7 +20,9 @@ namespace AG
       int Root(const int p)
       {
         int i = p;
-        while(mIds[i] != i)
+        // Keep going as long as the id of a particular index is its index itself
+        // When both are equal it indicates a root item and we cannot traverse further up
+        while(mIds[i] != i)                             
         {
           i = mIds[i];
         }
@@ -29,11 +31,14 @@ namespace AG
 
       bool Connected(const int p, const int q)
       {
+        // If the root of p, is the same as q, then both are connected
         return Root(p) == Root(q);
       }
 
       void Union(const int p, const int q)
       {
+        // Make a connection from the root of p, to the root of q
+        // A Merge operation of two trees
         mIds[Root(p)] = Root(q);
       }
 
@@ -47,7 +52,6 @@ namespace AG
         }
         std::cout << std::endl;
       }
-
 
     private:
       std::vector<int> mIds;
