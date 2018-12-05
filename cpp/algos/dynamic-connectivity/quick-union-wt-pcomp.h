@@ -13,8 +13,11 @@ namespace AG
       {
         for (auto i = 0; i < N; ++i)
         {
-          mIds.push_back(i);
+          mIds.push_back(i); // At the beginning, each item is connected to itself
           mWeights.push_back(1); // At the beginning all the weights are just 1
+          mComponentLargest.push_back(i); // At the beginning, since an item is connected
+                                          // to itself, the largest item of the component
+                                          // is also itself
         }
       }
 
@@ -56,20 +59,35 @@ namespace AG
         return Root(p) == Root(q);
       }
 
+      bool SystemPercolates()
+      {
+        return Connected(0, mIds.size()-1);
+      }
+
       void Union(const int p, const int q)
       {
         auto rootP = Root(p);
         auto rootQ = Root(q);
+        auto largest = p > q ? p : q;
 
         // This function will perform a union of P, with Q.
         // Meaning after this operation, the tree with P as root
         // will go under/connect to the tree with Q as root. 
         // Therefore, the new weight of P will will be 0, 
         // and the weight of Q will increase by the weight of P.
+        //
+        // This will also find if the largest among p and q, who shall
+        // be part of the same component this point on, is largest or smallest
+        // to the current value set at the root of this component. Accordingly
+        // the value at the root will be reset. Note that the rest of the items 
+        // in the sub tree still contain the older largest values. Since 
+        // we always see the value stored in the root, it shall contain the 
+        // correct value always.
         auto unionP2Q = [&](const int p, const int q) {
           mIds[p] = mIds[q];
           mWeights[q] += mWeights[p];
           mWeights[p] = 0;
+          mComponentLargest[q] = mComponentLargest[q] > largest ? mComponentLargest[q] : largest;
         };
 
         if (mWeights[rootP] >= mWeights[rootQ])
@@ -80,6 +98,11 @@ namespace AG
         {
           unionP2Q(rootP, rootQ);
         }
+      }
+
+      int find(const int p)
+      {
+        return mComponentLargest[Root(p)];
       }
 
       void Print(const std::string& s)
@@ -104,5 +127,6 @@ namespace AG
                                  // the number of items under it as children. At 
                                  // the very beginning there is just one item at 
                                  // each index. Therefore, each item contains a value 1
+      std::vector<int> mComponentLargest;
   };
 }
