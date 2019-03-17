@@ -15,17 +15,22 @@ class Orientation(Enum):
 #### They are not really points
 class Vector(object):
     def __init__(self, liCoordinates):
-        try:
-            self.mDimension = len(liCoordinates)
-            assert(self.mDimension >= 2)
-            self.mCoordinates = list(liCoordinates)
-        except AssertionError:
-            raise Exception("A vector can be formed with atleast two coordinates")
+        if liCoordinates:
+            try:
+                self.mDimension = len(liCoordinates)
+                assert(self.mDimension >= 2)
+                self.mCoordinates = list(liCoordinates)
+            except AssertionError:
+                raise Exception("A vector can be formed with atleast two coordinates")
+        else:
+            self.mDimension = 0
+            self.mCoordinates = []
 
     # Make a Vector joining two points. Note the two input arguments represent two points.
     def MakeVectorFromPoints(self, liPoint1, liPoint2):
         if (len(liPoint1) == len(liPoint2)):
             self.mCoordinates = [val-liPoint1[idx] for idx,val in enumerate(liPoint2)]
+            self.mDimension = len(self.mCoordinates)
 
     def __str__(self):
         return "Vector coordinates: {}".format(self.mCoordinates)
@@ -34,14 +39,14 @@ class Vector(object):
         return self.mCoordinates == v.mCoordinates
 
     def __add__(self, v):
-        return list(map(operator.add, self.mCoordinates, v.mCoordinates))
+        return Vector(list(map(operator.add, self.mCoordinates, v.mCoordinates)))
 
     def __sub__(self, v):
-        return list(map(operator.sub, self.mCoordinates, v.mCoordinates))
+        return Vector(list(map(operator.sub, self.mCoordinates, v.mCoordinates)))
 
     def __mul__(self, v):
         if type(v)==int or type(v)==float:
-            return [v*i for i in self.mCoordinates]
+            return Vector([v*i for i in self.mCoordinates])
         else:
             raise TypeError("Unsupported operand types")
 
