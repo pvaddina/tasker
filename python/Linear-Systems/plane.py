@@ -32,6 +32,10 @@ class Plane(object):
         nzCoordIdxs = [idx for idx,value in enumerate(self.mNormalVector.mCoordinates) if value != 0 ]
         return len(nzCoordIdxs), nzCoordIdxs
 
+    def GetZeroCoefficients(self):
+        nzCoordIdxs = [idx for idx,value in enumerate(self.mNormalVector.mCoordinates) if value == 0 ]
+        return len(nzCoordIdxs), nzCoordIdxs
+
     def InsertAndSolve(self, index, value):
         self.mK = self.mK - (self.mNormalVector.mCoordinates[index]*value)
         self.mNormalVector.mCoordinates[index] = 0
