@@ -1,4 +1,5 @@
 import plane
+import copy
 
 class LinearSystem(object):
     def __init__(self, liPlanes):
@@ -8,8 +9,8 @@ class LinearSystem(object):
                 assert d == p.mDimension            
             # Save the planes. But before that make sure the equations are sorted according to the
             # number of non-zero coefficients, in increasing order
-            self.mLiPlanes = liPlanes
-            self.mLiTempPlanes = liPlanes
+            self.mLiPlanes = copy.deepcopy(liPlanes)
+            self.mLiTempPlanes = copy.deepcopy(liPlanes)
             self.OrderPlanesInTriangForm()
             self.mSolutions = {}
         except AssertionError:
@@ -19,7 +20,14 @@ class LinearSystem(object):
         return len(self.mLiPlanes)
 
     def __str__(self):
-        return "A linear system with {} Planes".format(self.__len__())
+        for i in range(0,len(self.mLiPlanes)):
+            print("Plane with Normal {}".format(self.mLiPlanes[i]))
+        printStr = "Solution: {" + str(self.mSolutions[0])
+        for s in range(1, len(self.mSolutions)):
+            printStr += (", " + str(self.mSolutions[s]))
+        printStr += "}"
+        return printStr
+
 
     def OrderPlanesInTriangForm(self):
         self.mLiTempPlanes = sorted(self.mLiTempPlanes, key=lambda item: item.mDimension, reverse=True)
@@ -42,7 +50,7 @@ class LinearSystem(object):
         return planeEqToSolve + (srcEq*coefficient)
 
     def SolveSystem(self):
-        numplanes = len(self.mLiPlanes)
+        numplanes = len(self.mLiTempPlanes)
         for i in range(0, numplanes-1):
             srcEq = self.mLiTempPlanes[i]
             srcEq.NormalizeCoefficient(i)
@@ -52,10 +60,12 @@ class LinearSystem(object):
                 self.mLiTempPlanes[q] = self.AddEquations(srcEq, planeEqToSolve, i)
         self.OrderPlanesInTriangForm()
         self.SolveForValue()
+        '''
         printStr = "Solutions for the system: {" + str(self.mSolutions[0])
         for s in range(1, len(self.mSolutions)):
             printStr += (", " + str(self.mSolutions[s]))
         printStr += "}"
         print(printStr)
+        '''
                 
 

@@ -16,7 +16,7 @@ class Plane(object):
             self.mBasepoints.append([0, 0, constant/liCoordinates[2]])
 
     def __str__(self):
-        return "Normal vector of the Plane: {}".format(self.mNormalVector)
+        return "{}, k={}".format(self.mNormalVector, self.mK)
 
     def __add__(self, p):
         try:

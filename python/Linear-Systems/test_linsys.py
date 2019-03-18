@@ -9,6 +9,7 @@ def Test1():
 
     lSys = ls.LinearSystem([p1, p2, p3])
     lSys.SolveSystem()
+    print(str(lSys))
 
 
 Test1()
