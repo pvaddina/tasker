@@ -9,10 +9,10 @@ class LinearSystem(object):
                 assert d == p.mDimension            
             # Save the planes. But before that make sure the equations are sorted according to the
             # number of non-zero coefficients, in increasing order
+            self.mSolutions = {}
             liPlanes = self.OrderPlanesInTriangForm(liPlanes)
             self.mLiPlanes = copy.deepcopy(liPlanes)
             self.mLiTempPlanes = copy.deepcopy(liPlanes)
-            self.mSolutions = {}
         except AssertionError:
             raise Exception("All planes do not have the same Dimensions")
 
@@ -33,10 +33,16 @@ class LinearSystem(object):
 
 
     def OrderPlanesInTriangForm(self, allPlanes):
+        for p in allPlanes:
+            numNzs, nzIndices = p.GetNonZeroCoefficients()
+            if numNzs == 1:
+                nonZeroIndex = nzIndices[0]
+                self.mSolutions[nonZeroIndex] = round(p.mK/p.mNormalVector.mCoordinates[nonZeroIndex], 3)
         return sorted(allPlanes, key=lambda item: item.GetZeroCoefficients()[0], reverse=False)
 
+
     def SolveForValue(self):
-        while len(self.mSolutions) != len(self.mLiTempPlanes):
+        while len(self.mSolutions) != self.mLiTempPlanes[0].mDimension:
             for p in self.mLiTempPlanes:
                 numNzs,nzCoordIndices = p.GetNonZeroCoefficients()
                 if (numNzs == 1):
@@ -62,7 +68,7 @@ class LinearSystem(object):
                     planeEqToSolve = self.mLiTempPlanes[q]
                     planeEqToSolve.NormalizeCoefficient(i)
                     self.mLiTempPlanes[q] = self.AddEquations(srcEq, planeEqToSolve, i)
-                    numNzs,nzCoordIndices = self.mLiTempPlanes[q].GetNonZeroCoefficients()
+                    numNzs = self.mLiTempPlanes[q].GetNonZeroCoefficients()[0]
                     if numNzs == 0 and planeEqToSolve.mK != 0:
                         return
         self.mLiTempPlanes = self.OrderPlanesInTriangForm(self.mLiTempPlanes)
