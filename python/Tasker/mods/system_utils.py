@@ -25,6 +25,8 @@ class SysExec(interfaces.ISingleTask):
 
     def Execute(self):
         finalCommand = self.__cmd + " " + self.__args
+        cmdList = finalCommand.split(" ")
+        cmdList = [idx for idx in cmdList if len(idx)>0]
         print("Running the command: " + finalCommand)
-        console_op = subprocess.run(finalCommand, stdout=subprocess.PIPE)
+        console_op = subprocess.run(cmdList)
     

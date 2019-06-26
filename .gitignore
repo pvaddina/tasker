@@ -9,5 +9,5 @@ build/
 auto/
 cpp/hopinic/
 __pycache__
-
+python/Tasker/config.json
 
