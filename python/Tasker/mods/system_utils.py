@@ -17,7 +17,9 @@ import subprocess
 class SysExec(interfaces.ISingleTask):
     def __init__(self, dictTask):
         self.__cmd = dictTask["Cmd"]
-        self.__args = dictTask["Args"]
+        self.__args = ""
+        if "Args" in dictTask:
+          self.__args = dictTask["Args"]
         self.__name = dictTask["Name"]
 
     def GetInteractiveName(self):
