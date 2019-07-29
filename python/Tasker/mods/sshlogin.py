@@ -15,7 +15,7 @@ from colorama import Fore, Style
 #
 ###############################################################################
 
-COMMAND = "sshpass -p iluvr0hde ssh -o \"StrictHostKeyChecking no\" "
+COMMAND = "sshpass -p prakash ssh -o \"StrictHostKeyChecking no\" "
 DISPLAY_DEV_STR = "{:>6} {:>17} {:>25} {:>13}"
 
 class SshLogin(interfaces.ISingleTask):
