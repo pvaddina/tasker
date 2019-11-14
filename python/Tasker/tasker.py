@@ -80,6 +80,20 @@ class WorkPackage(object):
     def __init__(self, depth, dictWorkPackageConfig):
         self.__Tasks = [] # Where a single task is either a "SingleTask" or "TaskGroup"
         self.__depth = str(depth)
+
+        # Assign the values of the variables to the strings of the key "Consts"
+        if "Consts" in dictWorkPackageConfig:
+          v = {}
+          # Check if 'Vars' key is present
+          if "Vars" in dictWorkPackageConfig:
+            v = dictWorkPackageConfig['Vars']
+
+          # Now iterate through all the values of 'Consts' and replace the variables with their corresponding values
+          # as defined in the 'Vars' value dictionary
+          for k in dictWorkPackageConfig["Consts"].keys():
+            dictWorkPackageConfig['Consts'][k] = dictWorkPackageConfig['Consts'][k].format(**v)
+          
+        # Finally assign the modified dictionary locally
         self.__taskDefs = dictWorkPackageConfig
         
         i = 1
@@ -87,14 +101,17 @@ class WorkPackage(object):
         for singleTaskDefKey in self.__taskDefs["Args"].keys():
             taskDepth = self.__depth + "." + str(i) 
             singleTaskDefValue = self.__taskDefs["Args"].get(singleTaskDefKey, 'SHOULD NEVER HAPPEN')
+            constsDict = {}
+            if  "Consts" in self.__taskDefs:
+                constsDict = self.__taskDefs["Consts"]
+
             if "TaskContainer" in singleTaskDefKey:
-                self.__Tasks.append(TaskContainer(taskDepth,singleTaskDefValue, packageMod))
+                self.__Tasks.append(TaskContainer(taskDepth,constsDict,singleTaskDefValue, packageMod))
             elif "TaskGroup" in singleTaskDefKey:
-                self.__Tasks.append(TaskGroup(taskDepth,singleTaskDefValue, packageMod))
+                self.__Tasks.append(TaskGroup(taskDepth,constsDict,singleTaskDefValue, packageMod))
             else:
-                self.__Tasks.append(SingleTask(taskDepth,singleTaskDefValue, packageMod))
+                self.__Tasks.append(SingleTask(taskDepth,constsDict,singleTaskDefValue, packageMod))
             i = i + 1
-            
             
     def GetInteractiveName(self):
         return self.__taskDefs["Name"]
@@ -136,7 +153,7 @@ class WorkPackage(object):
 ###############################################################################
 
 class TaskContainer(object):
-    def __init__(self, depth, dictTaskContainer, mod):
+    def __init__(self, depth, constsDict, dictTaskContainer, mod):
         self.__tcTasks = []
         self.__depth = str(depth)
         self.__tcTaskDefs = dictTaskContainer
@@ -152,11 +169,11 @@ class TaskContainer(object):
             taskDepth = self.__depth + "." + str(i) 
             singleTaskDefValue = self.__tcTaskDefs["Args"].get(singleTaskDefKey, 'SHOULD NEVER HAPPEN')
             if "TaskContainer" in singleTaskDefKey:
-                self.__tcTasks.append(TaskContainer(taskDepth, singleTaskDefValue, containerMod))
+                self.__tcTasks.append(TaskContainer(taskDepth, constsDict, singleTaskDefValue, containerMod))
             elif "TaskGroup" in singleTaskDefKey:
-                self.__tcTasks.append(TaskGroup(taskDepth, singleTaskDefValue, containerMod))
+                self.__tcTasks.append(TaskGroup(taskDepth, constsDict, singleTaskDefValue, containerMod))
             else:
-                self.__tcTasks.append(SingleTask(taskDepth, singleTaskDefValue, containerMod))
+                self.__tcTasks.append(SingleTask(taskDepth, constsDict, singleTaskDefValue, containerMod))
             i = i + 1
             
             
@@ -207,7 +224,7 @@ class TaskContainer(object):
 ###############################################################################
 
 class TaskGroup(object):
-    def __init__(self, depth, dictTaskGrpConfig, mod):
+    def __init__(self, depth, constsDict, dictTaskGrpConfig, mod):
         self.__tgTasks = []
         self.__depth = str(depth)
         self.__tgTaskDefs = dictTaskGrpConfig
@@ -222,7 +239,7 @@ class TaskGroup(object):
         for singleTaskDefKey in self.__tgTaskDefs["Args"].keys():
             taskDepth = self.__depth + "." + str(i) 
             singleTaskDefValue = self.__tgTaskDefs["Args"].get(singleTaskDefKey, 'SHOULD NEVER HAPPEN')
-            self.__tgTasks.append(SingleTask(taskDepth, singleTaskDefValue, useModule))
+            self.__tgTasks.append(SingleTask(taskDepth, constsDict, singleTaskDefValue, useModule))
 
             i = i + 1
             
@@ -257,8 +274,12 @@ class TaskGroup(object):
 ###############################################################################
 
 class SingleTask(object):
-    def __init__(self, depth, dictTask, mod):
+    def __init__(self, depth, constsDict, dictTask, mod):
         self.__depth = str(depth)
+
+        # NOTE: 
+        # The dictTask will be modified here
+        dictTask["Consts"] = constsDict
 
         modParts = mod.split(".")
         modNameStr = modParts[0] + "." + modParts[1]
@@ -340,4 +361,3 @@ if __name__ == '__main__':
 
     if "wait" in options and bool(int(options["wait"])) == True:
         input("")
-

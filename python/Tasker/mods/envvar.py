@@ -9,7 +9,7 @@ detectPlatform = pf.system()
 
 if detectPlatform == "Linux":
     pass
-elif detectPlatrform == "Windows":
+elif detectPlatform == "Windows":
     from winreg import *
     import win32gui, win32con  
     import interfaces
