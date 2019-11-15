@@ -3,25 +3,55 @@ Created on 30.01.2018
 @author: Vaddina Prakash Rao
 '''
 
-from colorama import init, Fore, Back, Style
-init(autoreset=True) # The init function for Colorama
+import platform as pf
+detectPlatform = pf.system()
+
+if detectPlatform == "Linux":
+    class PrintStyle:
+        RED     = '\u001b[31m'
+        GREEN   = '\u001b[99m'
+        MAGENTA = '\u001b[35m'
+        WHITE   = '\033[37m'
+        RESET   = '\033[0m'
+
+    def lclPrint(s):
+        print(s+PrintStyle.RESET)
+
+    def lclPrintEnd(s):
+        print(s+PrintStyle.RESET, end='')
+
+elif detectPlatrform == "Windows":
+    from colorama import init, Fore, Back, Style
+    init(autoreset=True) # The init function for Colorama
+
+    class PrintStyle:
+        WHITE   = Style.BRIGHT + Fore.WHITE
+        MAGENTA = Style.BRIGHT + Fore.MAGENTA
+        GREEN   = Style.BRIGHT + Fore.GREEN
+        RED     = Style.BRIGHT + Fore.RED
+
+    def lclPrint(s):
+        print(s)
+
+    def lclPrintEnd(s):
+        print(s, end='')
+
 
 def NormalPrint(s):
-    print(Style.BRIGHT + Fore.WHITE + s)
+    lclPrint(PrintStyle.WHITE + s)
 
 def HighPrint(s):
-    print(Style.BRIGHT + Fore.MAGENTA + s)
+    lclPrint(PrintStyle.MAGENTA + s)
 
 def OkPrint(s):
-    print(Style.BRIGHT + Fore.GREEN + s)
+    lclPrint(PrintStyle.GREEN + s)
 
 def ErrorPrint(s):
-    print(Style.BRIGHT + Fore.RED + s)
+    lclPrint(PrintStyle.RED + s)
 
 def GetUserInput(numMaxEntries):
     while(True):
-        print(Style.BRIGHT + Fore.GREEN + "Please enter your choice or '-' to go up one level: ", end='')
-        #OkPrint("Please enter your choice or '-' to go up one level: ")
+        lclPrintEnd(PrintStyle.GREEN + "Please enter your choice or '-' to go up one level: ")
         userChoiceStr = input()
         if userChoiceStr != "-":
             try:
@@ -39,4 +69,3 @@ def GetUserInput(numMaxEntries):
             break
             
     return 0, False
-
