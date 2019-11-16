@@ -20,7 +20,7 @@ if detectPlatform == "Linux":
     def lclPrintEnd(s):
         print(s+PrintStyle.RESET, end='')
 
-elif detectPlatrform == "Windows":
+elif detectPlatform == "Windows":
     from colorama import init, Fore, Back, Style
     init(autoreset=True) # The init function for Colorama
 
