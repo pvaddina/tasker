@@ -11,6 +11,14 @@ import sys
 import os
 import utils
 
+import platform as pf
+
+detectPlatform = pf.system()
+seperator = " ; "
+
+if detectPlatform == "Windows":
+  seperator = " && "
+
 ###############################################################################
 #
 # SysExec 
@@ -45,7 +53,9 @@ class SysExec(interfaces.ISingleTask):
         execCmd = ""
         for cmd in self.__cmds:
           execCmd += cmd
-          execCmd += "; "
+          execCmd += seperator
+        execCmd = execCmd.rsplit(seperator, 1)[0]
+        
         print("Running the command: " + execCmd )
 
         ret = subprocess.call(execCmd, shell=True)
