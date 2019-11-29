@@ -17,7 +17,7 @@ detectPlatform = pf.system()
 seperator = " ; "
 
 if detectPlatform == "Windows":
-  seperator = " && "
+  seperator = " & "
 
 ###############################################################################
 #
