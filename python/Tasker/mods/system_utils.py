@@ -4,8 +4,6 @@ Created on 10.06.2018
 '''
 
 import interfaces
-
-from subprocess import call
 import subprocess
 import sys
 import os
@@ -15,9 +13,11 @@ import platform as pf
 
 detectPlatform = pf.system()
 seperator = " ; "
+launchCmd = "konsole -e \"bash -c \\\\\"{CMD1}; exec bash\\\\\"\""
 
 if detectPlatform == "Windows":
   seperator = " & "
+  launchCmd = "start cmd /k \"{CMD1}\""
 
 ###############################################################################
 #
@@ -50,15 +50,22 @@ class SysExec(interfaces.ISingleTask):
         return self.__name
 
     def Execute(self):
+        global launchCmd
         execCmd = ""
+        atleastOneFail = False
         for cmd in self.__cmds:
           execCmd += cmd
           execCmd += seperator
-        execCmd = execCmd.rsplit(seperator, 1)[0]
-        
-        print("Running the command: " + execCmd )
 
-        ret = subprocess.call(execCmd, shell=True)
+        execCmd = execCmd.rsplit(seperator, 1)[0]
+        print(launchCmd)
+        print(execCmd)
+        launchCmd = launchCmd.replace('{CMD1}', execCmd, 1)
+        
+        print("Using the command:{}".format(launchCmd))
+        subprocess.Popen(launchCmd, shell=True)
+
+        #ret = subprocess.Popen(execCmd)
 '''
         ####################################################################
         # Works but not recommended
