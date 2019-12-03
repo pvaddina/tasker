@@ -13,7 +13,7 @@ import platform as pf
 
 detectPlatform = pf.system()
 seperator = " ; "
-launchCmd = "konsole -e \"bash -c \\\\\"{CMD1}; exec bash\\\\\"\""
+launchCmd = "konsole -e \"bash -c \\\"{CMD1}; exec bash\\\"\""
 
 if detectPlatform == "Windows":
   seperator = " & "
