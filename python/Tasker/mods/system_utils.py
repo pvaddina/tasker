@@ -60,10 +60,10 @@ class SysExec(interfaces.ISingleTask):
         execCmd = execCmd.rsplit(seperator, 1)[0]
         print(launchCmd)
         print(execCmd)
-        launchCmd = launchCmd.replace('{CMD1}', execCmd, 1)
+        finalCmd = launchCmd.replace('{CMD1}', execCmd, 1)
         
-        print("Using the command:{}".format(launchCmd))
-        subprocess.Popen(launchCmd, shell=True)
+        print("Using the command:{}".format(finalCmd))
+        subprocess.Popen(finalCmd, shell=True)
 
         #ret = subprocess.Popen(execCmd)
 '''
