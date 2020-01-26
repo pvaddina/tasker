@@ -23,8 +23,14 @@ class WorkPackageHandler(object):
             self.__taskerConfig = json.load(json_data)
 
         depth = 1
+        refPackages = {}
+        try:
+            refPackages = self.__taskerConfig.pop('GenericWorkPackages')
+        except:
+            pass
+
         for value in self.__taskerConfig.values():
-            o = WorkPackage(depth, value)
+            o = WorkPackage(depth, value, refPackages)
             self.__workPackages.append(o)
             depth = depth + 1
 
@@ -60,8 +66,8 @@ class WorkPackageHandler(object):
         bContinue = True
         while bContinue:
             i = 1
-            for value in self.__taskerConfig.values():
-                utils.NormalPrint(str(i) + ". " + value["Name"])
+            for value in self.__workPackages:
+                utils.NormalPrint(str(i) + ". " + self.__workPackages[i-1].GetInteractiveName())
                 i = i + 1
                 
             userChoice, bContinue = utils.GetUserInput(len(self.__workPackages))
@@ -77,10 +83,14 @@ class WorkPackageHandler(object):
 #
 ###############################################################################
 class WorkPackage(object):
-    def __init__(self, depth, dictWorkPackageConfig):
+    def __init__(self, depth, dictWorkPackageConfig, genericWPs):
         self.__Tasks = [] # Where a single task is either a "SingleTask" or "TaskGroup"
         self.__depth = str(depth)
 
+        if "@GenericWorkPackages:" in dictWorkPackageConfig:
+            refWP = dictWorkPackageConfig.replace('@GenericWorkPackages: ','').strip()
+            dictWorkPackageConfig = genericWPs[refWP]
+        
         # Assign the values of the variables to the strings of the key "Consts"
         if "Consts" in dictWorkPackageConfig:
           v = {}
