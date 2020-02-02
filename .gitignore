@@ -4,6 +4,7 @@
 *.out
 *.obj
 .vscode
+.opt.json
 
 build/
 auto/
