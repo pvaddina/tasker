@@ -11,13 +11,16 @@ import os.path
 
 from pprint import pprint
 
+RT_OPTIONS_FILE = ".opt.json"
+DEFAULT_CONFIG_FILE = "config.json"
+
 ###############################################################################
 #
 # WorkPackageHandler
 #
 ###############################################################################
 class WorkPackageHandler(object):
-    def __init__(self, configFile):
+    def __init__(self, configFile, rtOptions):
         self.__workPackages = []
         with open(configFile) as json_data:
             self.__taskerConfig = json.load(json_data)
@@ -317,6 +320,32 @@ class SingleTask(object):
 
 ###############################################################################
 #
+# RtoptHandler
+#
+###############################################################################
+
+class RtoptHandler(object):
+    def __init__(self):
+        self.opt = {}
+        with open(RT_OPTIONS_FILE, 'r') as f:
+            self.rtopt = json.load(f)
+
+    def DumpToFile():
+        with open(RT_OPTIONS_FILE, 'w') as f:
+            json.dump(self.rtopt, f, indent=4, sort_keys=True)
+
+    def Getoptions(key):
+        if self.opt and key in self.opt:
+            return self.opt[key]
+        return None
+
+    def Addoptions(key, values):
+        self.opt[key] = values
+        
+
+
+###############################################################################
+#
 # __main__
 #
 ###############################################################################
@@ -340,7 +369,7 @@ def ReadIp():
         if "configfile" in options:
             cf = options["configfile"]
         else:
-            cf = "config.json"
+            cf = DEFAULT_CONFIG_FILE
             options["configfile"] = cf
             utils.HighPrint("Using the default configuration file \"" + cf + "\"\n")
 
@@ -354,10 +383,13 @@ def ReadIp():
 
 
 
+
 if __name__ == '__main__': 
     cont, options = ReadIp()
+    rtoptions = RtoptHandler()
+
     if cont == True:
-        t = WorkPackageHandler(options["configfile"])
+        t = WorkPackageHandler(options["configfile"], rtoptions)
         if "exec" in options:
             #print(options["exec"])
             execOpts = options["exec"]

@@ -1,0 +1,13 @@
+{
+    "LinuxBuild": {
+        "Builds": [
+            "Debug",
+            "Release"
+        ],
+        "Repos": [
+            "vim",
+            "ncursers",
+            "ref"
+        ]
+    }
+}
