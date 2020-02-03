@@ -9,7 +9,7 @@ import importlib
 import sys
 import os.path
 
-from pprint import pprint
+import pprint
 
 RT_OPTIONS_FILE = ".opt.json"
 DEFAULT_CONFIG_FILE = "config.json"
@@ -24,7 +24,11 @@ class WorkPackageHandler(object):
         self.__workPackages = []
         with open(configFile) as json_data:
             self.__taskerConfig = json.load(json_data)
+        self.__rtOptHandler = rtOptions
+        self.CreateWPS()
 
+
+    def CreateWPS(self):
         depth = 1
         refPackages = {}
         try:
@@ -33,7 +37,7 @@ class WorkPackageHandler(object):
             pass
 
         for value in self.__taskerConfig.values():
-            o = WorkPackage(depth, value, refPackages)
+            o = WorkPackage(depth, value, refPackages, self.__rtOptHandler)
             self.__workPackages.append(o)
             depth = depth + 1
 
@@ -86,7 +90,8 @@ class WorkPackageHandler(object):
 #
 ###############################################################################
 class WorkPackage(object):
-    def __init__(self, depth, dictWorkPackageConfig, genericWPs):
+    def __init__(self, depth, dictWorkPackageConfig, genericWPs, rtOptHandler):
+        self.__rtOptHandler = rtOptHandler
         self.__Tasks = [] # Where a single task is either a "SingleTask" or "TaskGroup"
         self.__depth = str(depth)
 
@@ -125,6 +130,7 @@ class WorkPackage(object):
             else:
                 self.__Tasks.append(SingleTask(taskDepth,constsDict,singleTaskDefValue, packageMod))
             i = i + 1
+
             
     def GetInteractiveName(self):
         return self.__taskDefs["Name"]
@@ -327,11 +333,21 @@ class SingleTask(object):
 class RtoptHandler(object):
     def __init__(self):
         self.opt = {}
-        with open(RT_OPTIONS_FILE, 'r') as f:
-            self.rtopt = json.load(f)
+        self.pp = pprint.PrettyPrinter(indent=4)
+        try:
+          with open(RT_OPTIONS_FILE, 'r') as f:
+              self.rtopt = json.load(f)
+        except:
+          pass # Do nothing
+
+    def Printout(key):
+        if key:
+            self.pp.pprint(self.opt['key'])
+        else:
+            self.pp.pprint(self.opt)
 
     def DumpToFile():
-        with open(RT_OPTIONS_FILE, 'w') as f:
+        with open(RT_OPTIONS_FILE, 'w+') as f:
             json.dump(self.rtopt, f, indent=4, sort_keys=True)
 
     def Getoptions(key):
@@ -391,7 +407,6 @@ if __name__ == '__main__':
     if cont == True:
         t = WorkPackageHandler(options["configfile"], rtoptions)
         if "exec" in options:
-            #print(options["exec"])
             execOpts = options["exec"]
             liExecOpts = execOpts.split(".")
             t.DirectExecute(liExecOpts)
