@@ -77,7 +77,7 @@ class WorkPackageHandler(object):
                 utils.NormalPrint(str(i) + ". " + self.__workPackages[i-1].GetInteractiveName())
                 i = i + 1
                 
-            userChoice, bContinue = utils.GetUserInput(len(self.__workPackages))
+            userChoice, bContinue = utils.GetUserInput([str(i) for i in range(1,len(self.__workPackages)+1)])
             if bContinue:
                 self.__workPackages[userChoice-1].Interact()
 
@@ -149,12 +149,13 @@ class WorkPackage(object):
 
             
     def Interact(self):
+        self.__rtOptHandler.Printout(None)
         bContinue = True
         while bContinue:            
             for i in range(0,len(self.__Tasks)):
                 utils.NormalPrint(self.__Tasks[i].GetInteractiveName())
                 
-            userChoice, bContinue = utils.GetUserInput(len(self.__Tasks))
+            userChoice, bContinue = utils.GetUserInput([str(i) for i in range(1,len(self.__Tasks)+1)])
             if bContinue:
                 self.__Tasks[userChoice-1].Execute()
 
@@ -223,12 +224,11 @@ class TaskContainer(object):
             for i in range(0,len(self.__tcTasks)):
                 utils.NormalPrint(self.__tcTasks[i].GetInteractiveName())
                 
-            userChoice, bContinue = utils.GetUserInput(len(self.__tcTasks))
+            userChoice, bContinue = utils.GetUserInput([str(i) for i in range(1,len(self.__tcTasks)+1)])
             if bContinue:
                 self.__tcTasks[userChoice-1].Execute()
 
             print("")
-                
 
     
     def Print(self):
@@ -268,6 +268,7 @@ class TaskGroup(object):
             utils.ErrorPrint("Error!! Incorrect option. Nothing done.")
         else:
             self.Execute()
+
 
     def GetInteractiveName(self):
         p = self.__depth + ". [GROUP] " + self.__tgTaskDefs["Name"]
@@ -333,29 +334,30 @@ class SingleTask(object):
 class RtoptHandler(object):
     def __init__(self):
         self.opt = {}
-        self.pp = pprint.PrettyPrinter(indent=4)
+        self.pp = pprint.PrettyPrinter(indent=2)
         try:
           with open(RT_OPTIONS_FILE, 'r') as f:
-              self.rtopt = json.load(f)
+              self.opt = json.load(f)
         except:
           pass # Do nothing
 
-    def Printout(key):
+    def Printout(self, key):
         if key:
             self.pp.pprint(self.opt['key'])
         else:
             self.pp.pprint(self.opt)
+        print("\n")
 
-    def DumpToFile():
+    def DumpToFile(self):
         with open(RT_OPTIONS_FILE, 'w+') as f:
-            json.dump(self.rtopt, f, indent=4, sort_keys=True)
+            json.dump(self.opt, f, indent=4, sort_keys=True)
 
-    def Getoptions(key):
+    def Getoptions(self, key):
         if self.opt and key in self.opt:
             return self.opt[key]
         return None
 
-    def Addoptions(key, values):
+    def Addoptions(self, key, values):
         self.opt[key] = values
         
 

@@ -54,18 +54,12 @@ def GetUserInput(numMaxEntries):
         lclPrintEnd(PrintStyle.GREEN + "Please enter your choice or '-' to go up one level: ")
         userChoiceStr = input()
         if userChoiceStr != "-":
-            try:
-                userChoice = int(userChoiceStr)
-                conversion = True;
-            except:
-                conversion = False
-                
-            if not conversion or (userChoice > numMaxEntries):
-                pass
-            else:
+            if userChoiceStr in numMaxEntries:
                 print("") # Add a new line
-                return userChoice, True
+                return int(userChoiceStr), True
         else:
             break
             
     return 0, False
+
+
