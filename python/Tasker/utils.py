@@ -49,17 +49,23 @@ def OkPrint(s):
 def ErrorPrint(s):
     lclPrint(PrintStyle.RED + s)
 
-def GetUserInput(numMaxEntries):
+def GetUserInput(acceptedVaues):
     while(True):
         lclPrintEnd(PrintStyle.GREEN + "Please enter your choice or '-' to go up one level: ")
-        userChoiceStr = input()
-        if userChoiceStr != "-":
-            if userChoiceStr in numMaxEntries:
+        usrChoice = input()
+        if usrChoice != "-":
+            if usrChoice in acceptedVaues:
                 print("") # Add a new line
-                return int(userChoiceStr), True
+                return usrChoice, True
         else:
             break
             
     return 0, False
+
+
+def GetNewOption():
+    lclPrintEnd(PrintStyle.GREEN + "Enter the value to update:")
+    userValue = input()
+    return userValue
 
 

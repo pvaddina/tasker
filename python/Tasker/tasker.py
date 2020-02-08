@@ -55,7 +55,6 @@ class WorkPackageHandler(object):
         
         for i in range(numEntries):
             print("Printing %d" % (i+1))
-            pprint(taskerVals[str(i+1)])
             
     def DirectExecute(self, liExecOpts):
         idx = int(liExecOpts[0]) - 1
@@ -78,6 +77,7 @@ class WorkPackageHandler(object):
                 i = i + 1
                 
             userChoice, bContinue = utils.GetUserInput([str(i) for i in range(1,len(self.__workPackages)+1)])
+            userChoice = int(userChoice)
             if bContinue:
                 self.__workPackages[userChoice-1].Interact()
 
@@ -149,15 +149,22 @@ class WorkPackage(object):
 
             
     def Interact(self):
-        self.__rtOptHandler.Printout(None)
+        key = None
+        if 'OptKey' in self.__taskDefs:
+            key = self.__taskDefs['OptKey']
         bContinue = True
         while bContinue:            
+            self.__rtOptHandler.Printout(key)
             for i in range(0,len(self.__Tasks)):
                 utils.NormalPrint(self.__Tasks[i].GetInteractiveName())
                 
-            userChoice, bContinue = utils.GetUserInput([str(i) for i in range(1,len(self.__Tasks)+1)])
-            if bContinue:
-                self.__Tasks[userChoice-1].Execute()
+            acceptableValues = [str(i) for i in range(1,len(self.__Tasks)+1)]
+            acceptableValues.append('e')
+            userChoice, bContinue = utils.GetUserInput(acceptableValues)
+            if userChoice == 'e':
+                self.__rtOptHandler.Update(key)
+            elif bContinue:
+                self.__Tasks[int(userChoice)-1].Execute()
 
             print("")
                 
@@ -225,6 +232,7 @@ class TaskContainer(object):
                 utils.NormalPrint(self.__tcTasks[i].GetInteractiveName())
                 
             userChoice, bContinue = utils.GetUserInput([str(i) for i in range(1,len(self.__tcTasks)+1)])
+            userChoice = int(userChoice)
             if bContinue:
                 self.__tcTasks[userChoice-1].Execute()
 
@@ -315,14 +323,14 @@ class SingleTask(object):
         if len(liExecOpts) > 0:
             utils.ErrorPrint("Incorrect option. Nothing done.")
         else:
-            self.__singleTask.Execute();
+            self.__singleTask.Execute()
 
 
     def GetInteractiveName(self):
-        return self.__depth + ". " + self.__singleTask.GetInteractiveName();
+        return self.__depth + ". " + self.__singleTask.GetInteractiveName()
 
     def Execute(self):
-        self.__singleTask.Execute();
+        self.__singleTask.Execute()
 
 
 ###############################################################################
@@ -343,10 +351,28 @@ class RtoptHandler(object):
 
     def Printout(self, key):
         if key:
-            self.pp.pprint(self.opt['key'])
+            print(json.dumps(self.opt[key], indent=4, sort_keys=False))
         else:
-            self.pp.pprint(self.opt)
+            print(json.dumps(self.opt, indent=4, sort_keys=False))
         print("\n")
+
+    def Update(self, key):
+        try:
+            if key:
+                curOpt = self.opt[key]
+                print(curOpt)
+                newOpt = utils.GetNewOption()
+                newOpt = newOpt.replace('\'', '\"')
+                self.opt[key] = json.loads(newOpt)
+            else:
+                curOpt = self.opt
+                print(curOpt)
+                newOpt = utils.GetNewOption()
+                newOpt = newOpt.replace('\'', '\"')
+                self.opt = json.loads(newOpt)
+        except:
+            utils.ErrorPrint("An error occured while changing the options. Aborting !!")
+
 
     def DumpToFile(self):
         with open(RT_OPTIONS_FILE, 'w+') as f:
@@ -418,5 +444,6 @@ if __name__ == '__main__':
     elif cont == False:
         utils.OkPrint("Exiting ....")
 
+    rtoptions.DumpToFile()
     if "wait" in options and bool(int(options["wait"])) == True:
         input("")
