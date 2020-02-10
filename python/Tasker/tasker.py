@@ -8,6 +8,7 @@ import utils
 import importlib
 import sys
 import os.path
+import copy
 
 import pprint
 
@@ -92,36 +93,59 @@ class WorkPackageHandler(object):
 class WorkPackage(object):
     def __init__(self, depth, dictWorkPackageConfig, genericWPs, rtOptHandler):
         self.__rtOptHandler = rtOptHandler
-        self.__Tasks = [] # Where a single task is either a "SingleTask" or "TaskGroup"
         self.__depth = str(depth)
 
         if "@GenericWorkPackages:" in dictWorkPackageConfig:
             refWP = dictWorkPackageConfig.replace('@GenericWorkPackages: ','').strip()
             dictWorkPackageConfig = genericWPs[refWP]
-        
-        # Assign the values of the variables to the strings of the key "Consts"
-        if "Consts" in dictWorkPackageConfig:
-          v = {}
-          # Check if 'Vars' key is present
-          if "Vars" in dictWorkPackageConfig:
-            v = dictWorkPackageConfig['Vars']
-
-          # Now iterate through all the values of 'Consts' and replace the variables with their corresponding values
-          # as defined in the 'Vars' value dictionary
-          for k in dictWorkPackageConfig["Consts"].keys():
-            dictWorkPackageConfig['Consts'][k] = dictWorkPackageConfig['Consts'][k].format(**v)
           
         # Finally assign the modified dictionary locally
         self.__taskDefs = dictWorkPackageConfig
-        
+
+        # Assign the option key if defined any
+        self.__OptKey = None
+        if 'OptKey' in self.__taskDefs:
+            self.__OptKey = self.__taskDefs['OptKey']
+
+        # Finally make the tasks
+        self.MakeTasks()
+
+
+    def MakeTasks(self):
+        # First make a copy of the original dictionary containing the whole task definitions
+        tds = copy.deepcopy(self.__taskDefs)
+
+        # Assign the values of the variables to the strings of the key "Consts"
+        if "Consts" in tds:
+            v = {}
+            # Check if 'Vars' key is present
+            if "Vars" in tds:
+                v = tds['Vars']
+
+            # Update the 'Vars' dictionary with the runtime options for this WP
+            if self.__OptKey:
+                try:
+                    rtOptions = self.__rtOptHandler.Getoptions(self.__OptKey)
+                    rtCurrentOpt = rtOptions[rtOptions['current']]
+                    v.update(rtCurrentOpt)
+                except:
+                    # Case when there is a problem in the way the run time options are expected
+                    pass
+
+            # Now iterate through all the values of 'Consts' and replace the variables with their corresponding values
+            # as defined in the 'Vars' value dictionary
+            for k in tds["Consts"].keys():
+                tds['Consts'][k] = tds['Consts'][k].format(**v)
+
+        self.__Tasks = [] # Where a single task is either a "SingleTask" or "TaskGroup"
         i = 1
-        packageMod = self.__taskDefs["Module"]
-        for singleTaskDefKey in self.__taskDefs["Args"].keys():
+        packageMod = tds["Module"]
+        for singleTaskDefKey in tds["Args"].keys():
             taskDepth = self.__depth + "." + str(i) 
-            singleTaskDefValue = self.__taskDefs["Args"].get(singleTaskDefKey, 'SHOULD NEVER HAPPEN')
+            singleTaskDefValue = tds["Args"].get(singleTaskDefKey, 'SHOULD NEVER HAPPEN')
             constsDict = {}
-            if  "Consts" in self.__taskDefs:
-                constsDict = self.__taskDefs["Consts"]
+            if  "Consts" in tds:
+                constsDict = tds["Consts"]
 
             if "TaskContainer" in singleTaskDefKey:
                 self.__Tasks.append(TaskContainer(taskDepth,constsDict,singleTaskDefValue, packageMod))
@@ -149,20 +173,23 @@ class WorkPackage(object):
 
             
     def Interact(self):
-        key = None
-        if 'OptKey' in self.__taskDefs:
-            key = self.__taskDefs['OptKey']
         bContinue = True
         while bContinue:            
-            self.__rtOptHandler.Printout(key)
+            self.__rtOptHandler.Printout(self.__OptKey)
             for i in range(0,len(self.__Tasks)):
                 utils.NormalPrint(self.__Tasks[i].GetInteractiveName())
                 
             acceptableValues = [str(i) for i in range(1,len(self.__Tasks)+1)]
             acceptableValues.append('e')
+            acceptableValues.append('c')
             userChoice, bContinue = utils.GetUserInput(acceptableValues)
             if userChoice == 'e':
-                self.__rtOptHandler.Update(key)
+                self.__rtOptHandler.Update(self.__OptKey)
+                self.MakeTasks()
+            elif userChoice == 'c':
+                self.__rtOptHandler.UpdateValue(self.__OptKey, 'current')
+                self.MakeTasks()
+                pass
             elif bContinue:
                 self.__Tasks[int(userChoice)-1].Execute()
 
@@ -351,27 +378,38 @@ class RtoptHandler(object):
 
     def Printout(self, key):
         if key:
-            print(json.dumps(self.opt[key], indent=4, sort_keys=False))
+            utils.CustomPrint(utils.PrintStyle.YELLOW, json.dumps(self.opt[key], indent=4, sort_keys=False))
         else:
-            print(json.dumps(self.opt, indent=4, sort_keys=False))
+            utils.CustomPrint(utils.PrintStyle.YELLOW, json.dumps(self.opt, indent=4, sort_keys=False))
         print("\n")
+
+    def UpdateValue(self, optionKey, subKey):
+        try:
+            if optionKey:
+                curOpt = self.opt[optionKey][subKey]
+                utils.CustomPrint(utils.PrintStyle.BLUE, str(curOpt))
+                newVal = utils.GetNewOption()
+                self.opt[optionKey][subKey] = newVal
+        except:
+            utils.ErrorPrint("An error occured while processing your input. No changes are made to the options...")
+
 
     def Update(self, key):
         try:
             if key:
                 curOpt = self.opt[key]
-                print(curOpt)
+                utils.CustomPrint(utils.PrintStyle.BLUE, str(curOpt))
                 newOpt = utils.GetNewOption()
                 newOpt = newOpt.replace('\'', '\"')
                 self.opt[key] = json.loads(newOpt)
             else:
                 curOpt = self.opt
-                print(curOpt)
+                utils.CustomPrint(utils.PrintStyle.BLUE, str(curOpt))
                 newOpt = utils.GetNewOption()
                 newOpt = newOpt.replace('\'', '\"')
                 self.opt = json.loads(newOpt)
         except:
-            utils.ErrorPrint("An error occured while changing the options. Aborting !!")
+            utils.ErrorPrint("An error occured while processing your input. No changes are made to the options...")
 
 
     def DumpToFile(self):

@@ -4,10 +4,16 @@
             "Debug",
             "Release"
         ],
-        "Repos": [
-            "vim",
-            "ncursers",
-            "ref"
+        "OtherOptions": "Value",
+        "Yet": {
+            "One": 1,
+            "Two": 2
+        }
+    },
+    "WindowsBuild": {
+        "Builds": [
+            "Debug",
+            "Release"
         ]
     }
 }
