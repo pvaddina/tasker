@@ -378,10 +378,10 @@ class RtoptHandler(object):
           pass # Do nothing
 
     def Printout(self, key):
+        v = {}
         if key:
-            utils.CustomPrint(utils.PrintStyle.YELLOW, json.dumps(self.opt[key], indent=4, sort_keys=False))
-        else:
-            utils.CustomPrint(utils.PrintStyle.YELLOW, json.dumps(self.opt, indent=4, sort_keys=False))
+            v = self.opt[key]
+        utils.CustomPrint(utils.PrintStyle.YELLOW, json.dumps(v, indent=4, sort_keys=False))
         print("\n")
 
     def UpdateValue(self, optionKey, subKey):
