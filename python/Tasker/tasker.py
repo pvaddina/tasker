@@ -3,7 +3,8 @@ Created on 20.01.2018
 @author: Vaddina Prakash Rao
 '''
 
-import json 
+import json
+from collections import OrderedDict
 import utils 
 import importlib
 import sys
@@ -24,7 +25,7 @@ class WorkPackageHandler(object):
     def __init__(self, configFile, rtOptions):
         self.__workPackages = []
         with open(configFile) as json_data:
-            self.__taskerConfig = json.load(json_data)
+            self.__taskerConfig = json.load(json_data, object_pairs_hook=OrderedDict)
         self.__rtOptHandler = rtOptions
         self.CreateWPS()
 
@@ -50,7 +51,7 @@ class WorkPackageHandler(object):
     
     def RawConfigFilePrint(self):
         with open('tasker.json') as json_data:
-            taskerVals = json.load(json_data)
+            taskerVals = json.load(json_data, object_pairs_hook=OrderedDict)
         
         numEntries = len(taskerVals)
         
@@ -372,7 +373,7 @@ class RtoptHandler(object):
         self.pp = pprint.PrettyPrinter(indent=2)
         try:
           with open(RT_OPTIONS_FILE, 'r') as f:
-              self.opt = json.load(f)
+              self.opt = json.load(f, object_pairs_hook=OrderedDict)
         except:
           pass # Do nothing
 
@@ -401,13 +402,13 @@ class RtoptHandler(object):
                 utils.CustomPrint(utils.PrintStyle.BLUE, str(curOpt))
                 newOpt = utils.GetNewOption()
                 newOpt = newOpt.replace('\'', '\"')
-                self.opt[key] = json.loads(newOpt)
+                self.opt[key] = json.loads(newOpt, object_pairs_hook=OrderedDict)
             else:
                 curOpt = self.opt
                 utils.CustomPrint(utils.PrintStyle.BLUE, str(curOpt))
                 newOpt = utils.GetNewOption()
                 newOpt = newOpt.replace('\'', '\"')
-                self.opt = json.loads(newOpt)
+                self.opt = json.loads(newOpt, object_pairs_hook=OrderedDict)
         except:
             utils.ErrorPrint("An error occured while processing your input. No changes are made to the options...")
 
