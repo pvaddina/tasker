@@ -57,6 +57,7 @@ class WorkPackageHandler(object):
         
         for i in range(numEntries):
             print("Printing %d" % (i+1))
+
             
     def DirectExecute(self, liExecOpts):
         idx = int(liExecOpts[0]) - 1
@@ -183,6 +184,7 @@ class WorkPackage(object):
             acceptableValues = [str(i) for i in range(1,len(self.__Tasks)+1)]
             acceptableValues.append('e')
             acceptableValues.append('c')
+            acceptableValues.append('w')
             userChoice, bContinue = utils.GetUserInput(acceptableValues)
             if userChoice == 'e':
                 self.__rtOptHandler.Update(self.__OptKey)
@@ -190,7 +192,9 @@ class WorkPackage(object):
             elif userChoice == 'c':
                 self.__rtOptHandler.UpdateValue(self.__OptKey, 'current')
                 self.MakeTasks()
-                pass
+            elif userChoice == 'w':
+                utils.OkPrint("Writing current options to .opt.json")
+                self.__rtOptHandler.DumpToFile()
             elif bContinue:
                 self.__Tasks[int(userChoice)-1].Execute()
 
@@ -373,42 +377,50 @@ class RtoptHandler(object):
         self.pp = pprint.PrettyPrinter(indent=2)
         try:
           with open(RT_OPTIONS_FILE, 'r') as f:
-              self.opt = json.load(f, object_pairs_hook=OrderedDict)
+              self.opt = json.load(f)
         except:
           pass # Do nothing
 
     def Printout(self, key):
         v = {}
-        if key:
-            v = self.opt[key]
+        try:
+            if key:
+                v = self.opt[key]
+        except:
+            pass # No options
         utils.CustomPrint(utils.PrintStyle.YELLOW, json.dumps(v, indent=4, sort_keys=False))
         print("\n")
 
     def UpdateValue(self, optionKey, subKey):
+        if optionKey not in self.opt:
+            utils.ErrorPrint("The key " + optionKey + " is not present. Nothing updated.")
+
+        if subKey not in self.opt[optionKey]:
+            utils.ErrorPrint("The subkey " + subKey + " is not present. Creating one.")
+            self.opt[optionKey][subKey] = ""
+
         try:
-            if optionKey:
-                curOpt = self.opt[optionKey][subKey]
-                utils.CustomPrint(utils.PrintStyle.BLUE, str(curOpt))
-                newVal = utils.GetNewOption()
-                self.opt[optionKey][subKey] = newVal
+            curOpt = self.opt[optionKey][subKey]
+            utils.CustomPrint(utils.PrintStyle.BLUE, str(curOpt))
+            newVal = utils.GetNewOption()
+            self.opt[optionKey][subKey] = newVal
         except:
             utils.ErrorPrint("An error occured while processing your input. No changes are made to the options...")
 
 
     def Update(self, key):
+        curOpt = {}
         try:
             if key:
                 curOpt = self.opt[key]
-                utils.CustomPrint(utils.PrintStyle.BLUE, str(curOpt))
-                newOpt = utils.GetNewOption()
-                newOpt = newOpt.replace('\'', '\"')
-                self.opt[key] = json.loads(newOpt, object_pairs_hook=OrderedDict)
-            else:
-                curOpt = self.opt
-                utils.CustomPrint(utils.PrintStyle.BLUE, str(curOpt))
-                newOpt = utils.GetNewOption()
-                newOpt = newOpt.replace('\'', '\"')
-                self.opt = json.loads(newOpt, object_pairs_hook=OrderedDict)
+        except:
+            pass # No options or invalid key
+
+        try:
+            utils.CustomPrint(utils.PrintStyle.BLUE, str(curOpt))
+            newOpt = utils.GetNewOption()
+            newOpt = newOpt.replace('\'', '\"')
+            self.opt[key] = json.loads(newOpt)
         except:
             utils.ErrorPrint("An error occured while processing your input. No changes are made to the options...")
 
@@ -483,6 +495,5 @@ if __name__ == '__main__':
     elif cont == False:
         utils.OkPrint("Exiting ....")
 
-    rtoptions.DumpToFile()
     if "wait" in options and bool(int(options["wait"])) == True:
         input("")
