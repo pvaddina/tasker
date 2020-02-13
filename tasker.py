@@ -3,13 +3,18 @@ Created on 20.01.2018
 @author: Vaddina Prakash Rao
 '''
 
-import json 
+import json
+from collections import OrderedDict
 import utils 
 import importlib
 import sys
 import os.path
+import copy
 
-from pprint import pprint
+import pprint
+
+RT_OPTIONS_FILE = ".opt.json"
+DEFAULT_CONFIG_FILE = "config.json"
 
 ###############################################################################
 #
@@ -17,11 +22,15 @@ from pprint import pprint
 #
 ###############################################################################
 class WorkPackageHandler(object):
-    def __init__(self, configFile):
+    def __init__(self, configFile, rtOptions):
         self.__workPackages = []
         with open(configFile) as json_data:
-            self.__taskerConfig = json.load(json_data)
+            self.__taskerConfig = json.load(json_data, object_pairs_hook=OrderedDict)
+        self.__rtOptHandler = rtOptions
+        self.CreateWPS()
 
+
+    def CreateWPS(self):
         depth = 1
         refPackages = {}
         try:
@@ -30,7 +39,7 @@ class WorkPackageHandler(object):
             pass
 
         for value in self.__taskerConfig.values():
-            o = WorkPackage(depth, value, refPackages)
+            o = WorkPackage(depth, value, refPackages, self.__rtOptHandler)
             self.__workPackages.append(o)
             depth = depth + 1
 
@@ -42,13 +51,12 @@ class WorkPackageHandler(object):
     
     def RawConfigFilePrint(self):
         with open('tasker.json') as json_data:
-            taskerVals = json.load(json_data)
+            taskerVals = json.load(json_data, object_pairs_hook=OrderedDict)
         
         numEntries = len(taskerVals)
         
         for i in range(numEntries):
             print("Printing %d" % (i+1))
-            pprint(taskerVals[str(i+1)])
             
     def DirectExecute(self, liExecOpts):
         idx = int(liExecOpts[0]) - 1
@@ -70,7 +78,8 @@ class WorkPackageHandler(object):
                 utils.NormalPrint(str(i) + ". " + self.__workPackages[i-1].GetInteractiveName())
                 i = i + 1
                 
-            userChoice, bContinue = utils.GetUserInput(len(self.__workPackages))
+            userChoice, bContinue = utils.GetUserInput([str(i) for i in range(1,len(self.__workPackages)+1)])
+            userChoice = int(userChoice)
             if bContinue:
                 self.__workPackages[userChoice-1].Interact()
 
@@ -83,37 +92,61 @@ class WorkPackageHandler(object):
 #
 ###############################################################################
 class WorkPackage(object):
-    def __init__(self, depth, dictWorkPackageConfig, genericWPs):
-        self.__Tasks = [] # Where a single task is either a "SingleTask" or "TaskGroup"
+    def __init__(self, depth, dictWorkPackageConfig, genericWPs, rtOptHandler):
+        self.__rtOptHandler = rtOptHandler
         self.__depth = str(depth)
 
         if "@GenericWorkPackages:" in dictWorkPackageConfig:
             refWP = dictWorkPackageConfig.replace('@GenericWorkPackages: ','').strip()
             dictWorkPackageConfig = genericWPs[refWP]
-        
-        # Assign the values of the variables to the strings of the key "Consts"
-        if "Consts" in dictWorkPackageConfig:
-          v = {}
-          # Check if 'Vars' key is present
-          if "Vars" in dictWorkPackageConfig:
-            v = dictWorkPackageConfig['Vars']
-
-          # Now iterate through all the values of 'Consts' and replace the variables with their corresponding values
-          # as defined in the 'Vars' value dictionary
-          for k in dictWorkPackageConfig["Consts"].keys():
-            dictWorkPackageConfig['Consts'][k] = dictWorkPackageConfig['Consts'][k].format(**v)
           
         # Finally assign the modified dictionary locally
         self.__taskDefs = dictWorkPackageConfig
-        
+
+        # Assign the option key if defined any
+        self.__OptKey = None
+        if 'OptKey' in self.__taskDefs:
+            self.__OptKey = self.__taskDefs['OptKey']
+
+        # Finally make the tasks
+        self.MakeTasks()
+
+
+    def MakeTasks(self):
+        # First make a copy of the original dictionary containing the whole task definitions
+        tds = copy.deepcopy(self.__taskDefs)
+
+        # Assign the values of the variables to the strings of the key "Consts"
+        if "Consts" in tds:
+            v = {}
+            # Check if 'Vars' key is present
+            if "Vars" in tds:
+                v = tds['Vars']
+
+            # Update the 'Vars' dictionary with the runtime options for this WP
+            if self.__OptKey:
+                try:
+                    rtOptions = self.__rtOptHandler.Getoptions(self.__OptKey)
+                    rtCurrentOpt = rtOptions[rtOptions['current']]
+                    v.update(rtCurrentOpt)
+                except:
+                    # Case when there is a problem in the way the run time options are expected
+                    pass
+
+            # Now iterate through all the values of 'Consts' and replace the variables with their corresponding values
+            # as defined in the 'Vars' value dictionary
+            for k in tds["Consts"].keys():
+                tds['Consts'][k] = tds['Consts'][k].format(**v)
+
+        self.__Tasks = [] # Where a single task is either a "SingleTask" or "TaskGroup"
         i = 1
-        packageMod = self.__taskDefs["Module"]
-        for singleTaskDefKey in self.__taskDefs["Args"].keys():
+        packageMod = tds["Module"]
+        for singleTaskDefKey in tds["Args"].keys():
             taskDepth = self.__depth + "." + str(i) 
-            singleTaskDefValue = self.__taskDefs["Args"].get(singleTaskDefKey, 'SHOULD NEVER HAPPEN')
+            singleTaskDefValue = tds["Args"].get(singleTaskDefKey, 'SHOULD NEVER HAPPEN')
             constsDict = {}
-            if  "Consts" in self.__taskDefs:
-                constsDict = self.__taskDefs["Consts"]
+            if  "Consts" in tds:
+                constsDict = tds["Consts"]
 
             if "TaskContainer" in singleTaskDefKey:
                 self.__Tasks.append(TaskContainer(taskDepth,constsDict,singleTaskDefValue, packageMod))
@@ -122,6 +155,7 @@ class WorkPackage(object):
             else:
                 self.__Tasks.append(SingleTask(taskDepth,constsDict,singleTaskDefValue, packageMod))
             i = i + 1
+
             
     def GetInteractiveName(self):
         return self.__taskDefs["Name"]
@@ -142,12 +176,23 @@ class WorkPackage(object):
     def Interact(self):
         bContinue = True
         while bContinue:            
+            self.__rtOptHandler.Printout(self.__OptKey)
             for i in range(0,len(self.__Tasks)):
                 utils.NormalPrint(self.__Tasks[i].GetInteractiveName())
                 
-            userChoice, bContinue = utils.GetUserInput(len(self.__Tasks))
-            if bContinue:
-                self.__Tasks[userChoice-1].Execute()
+            acceptableValues = [str(i) for i in range(1,len(self.__Tasks)+1)]
+            acceptableValues.append('e')
+            acceptableValues.append('c')
+            userChoice, bContinue = utils.GetUserInput(acceptableValues)
+            if userChoice == 'e':
+                self.__rtOptHandler.Update(self.__OptKey)
+                self.MakeTasks()
+            elif userChoice == 'c':
+                self.__rtOptHandler.UpdateValue(self.__OptKey, 'current')
+                self.MakeTasks()
+                pass
+            elif bContinue:
+                self.__Tasks[int(userChoice)-1].Execute()
 
             print("")
                 
@@ -214,12 +259,12 @@ class TaskContainer(object):
             for i in range(0,len(self.__tcTasks)):
                 utils.NormalPrint(self.__tcTasks[i].GetInteractiveName())
                 
-            userChoice, bContinue = utils.GetUserInput(len(self.__tcTasks))
+            userChoice, bContinue = utils.GetUserInput([str(i) for i in range(1,len(self.__tcTasks)+1)])
+            userChoice = int(userChoice)
             if bContinue:
                 self.__tcTasks[userChoice-1].Execute()
 
             print("")
-                
 
     
     def Print(self):
@@ -259,6 +304,7 @@ class TaskGroup(object):
             utils.ErrorPrint("Error!! Incorrect option. Nothing done.")
         else:
             self.Execute()
+
 
     def GetInteractiveName(self):
         p = self.__depth + ". [GROUP] " + self.__tgTaskDefs["Name"]
@@ -305,14 +351,80 @@ class SingleTask(object):
         if len(liExecOpts) > 0:
             utils.ErrorPrint("Incorrect option. Nothing done.")
         else:
-            self.__singleTask.Execute();
+            self.__singleTask.Execute()
 
 
     def GetInteractiveName(self):
-        return self.__depth + ". " + self.__singleTask.GetInteractiveName();
+        return self.__depth + ". " + self.__singleTask.GetInteractiveName()
 
     def Execute(self):
-        self.__singleTask.Execute();
+        self.__singleTask.Execute()
+
+
+###############################################################################
+#
+# RtoptHandler
+#
+###############################################################################
+
+class RtoptHandler(object):
+    def __init__(self):
+        self.opt = {}
+        self.pp = pprint.PrettyPrinter(indent=2)
+        try:
+          with open(RT_OPTIONS_FILE, 'r') as f:
+              self.opt = json.load(f, object_pairs_hook=OrderedDict)
+        except:
+          pass # Do nothing
+
+    def Printout(self, key):
+        v = {}
+        if key:
+            v = self.opt[key]
+        utils.CustomPrint(utils.PrintStyle.YELLOW, json.dumps(v, indent=4, sort_keys=False))
+        print("\n")
+
+    def UpdateValue(self, optionKey, subKey):
+        try:
+            if optionKey:
+                curOpt = self.opt[optionKey][subKey]
+                utils.CustomPrint(utils.PrintStyle.BLUE, str(curOpt))
+                newVal = utils.GetNewOption()
+                self.opt[optionKey][subKey] = newVal
+        except:
+            utils.ErrorPrint("An error occured while processing your input. No changes are made to the options...")
+
+
+    def Update(self, key):
+        try:
+            if key:
+                curOpt = self.opt[key]
+                utils.CustomPrint(utils.PrintStyle.BLUE, str(curOpt))
+                newOpt = utils.GetNewOption()
+                newOpt = newOpt.replace('\'', '\"')
+                self.opt[key] = json.loads(newOpt, object_pairs_hook=OrderedDict)
+            else:
+                curOpt = self.opt
+                utils.CustomPrint(utils.PrintStyle.BLUE, str(curOpt))
+                newOpt = utils.GetNewOption()
+                newOpt = newOpt.replace('\'', '\"')
+                self.opt = json.loads(newOpt, object_pairs_hook=OrderedDict)
+        except:
+            utils.ErrorPrint("An error occured while processing your input. No changes are made to the options...")
+
+
+    def DumpToFile(self):
+        with open(RT_OPTIONS_FILE, 'w+') as f:
+            json.dump(self.opt, f, indent=4, sort_keys=True)
+
+    def Getoptions(self, key):
+        if self.opt and key in self.opt:
+            return self.opt[key]
+        return None
+
+    def Addoptions(self, key, values):
+        self.opt[key] = values
+        
 
 
 ###############################################################################
@@ -340,7 +452,7 @@ def ReadIp():
         if "configfile" in options:
             cf = options["configfile"]
         else:
-            cf = "config.json"
+            cf = DEFAULT_CONFIG_FILE
             options["configfile"] = cf
             utils.HighPrint("Using the default configuration file \"" + cf + "\"\n")
 
@@ -354,12 +466,14 @@ def ReadIp():
 
 
 
+
 if __name__ == '__main__': 
     cont, options = ReadIp()
+    rtoptions = RtoptHandler()
+
     if cont == True:
-        t = WorkPackageHandler(options["configfile"])
+        t = WorkPackageHandler(options["configfile"], rtoptions)
         if "exec" in options:
-            #print(options["exec"])
             execOpts = options["exec"]
             liExecOpts = execOpts.split(".")
             t.DirectExecute(liExecOpts)
@@ -369,5 +483,6 @@ if __name__ == '__main__':
     elif cont == False:
         utils.OkPrint("Exiting ....")
 
+    rtoptions.DumpToFile()
     if "wait" in options and bool(int(options["wait"])) == True:
         input("")

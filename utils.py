@@ -7,11 +7,14 @@ import platform as pf
 detectPlatform = pf.system()
 
 if detectPlatform == "Linux":
-    class PrintStyle:
-        RED     = '\u001b[31m'
-        GREEN   = '\u001b[99m'
-        MAGENTA = '\u001b[35m'
-        WHITE   = '\033[37m'
+    class PrintStyle: 
+        # For all the following color codes, replace the ';1m' with 'm' to get corresponding non-Bold color codes
+        RED     = '\u001b[31;1m'
+        GREEN   = '\u001b[32;1m'
+        MAGENTA = '\u001b[35;1m'
+        WHITE   = '\033[37;1m'
+        YELLOW  = '\u001b[33;1m'
+        BLUE    = '\u001b[34;1m'
         RESET   = '\033[0m'
 
     def lclPrint(s):
@@ -29,6 +32,8 @@ elif detectPlatform == "Windows":
         MAGENTA = Style.BRIGHT + Fore.MAGENTA
         GREEN   = Style.BRIGHT + Fore.GREEN
         RED     = Style.BRIGHT + Fore.RED
+        YELLOW  = Style.BRIGHT + Fore.YELLOW
+        BLUE    = Style.BRIGHT + Fore.BLUE
 
     def lclPrint(s):
         print(s)
@@ -49,23 +54,26 @@ def OkPrint(s):
 def ErrorPrint(s):
     lclPrint(PrintStyle.RED + s)
 
-def GetUserInput(numMaxEntries):
+def CustomPrint(style, s):
+    lclPrint(style + s)
+
+def GetUserInput(acceptedVaues):
     while(True):
-        lclPrintEnd(PrintStyle.GREEN + "Please enter your choice or '-' to go up one level: ")
-        userChoiceStr = input()
-        if userChoiceStr != "-":
-            try:
-                userChoice = int(userChoiceStr)
-                conversion = True;
-            except:
-                conversion = False
-                
-            if not conversion or (userChoice > numMaxEntries):
-                pass
-            else:
+        lclPrintEnd(PrintStyle.GREEN + "Please enter your choice {}: ".format(acceptedVaues))
+        usrChoice = input()
+        if usrChoice != "-":
+            if usrChoice in acceptedVaues:
                 print("") # Add a new line
-                return userChoice, True
+                return usrChoice, True
         else:
             break
             
     return 0, False
+
+
+def GetNewOption():
+    lclPrintEnd(PrintStyle.GREEN + "Enter a new value:")
+    userValue = input()
+    return userValue
+
+
