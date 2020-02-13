@@ -4,11 +4,11 @@
 *.out
 *.obj
 .vscode
+config.json
 .opt.json
 
 build/
 auto/
 cpp/hopinic/
 __pycache__
-python/Tasker/config.json
 
