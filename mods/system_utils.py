@@ -52,53 +52,12 @@ class SysExec(interfaces.ISingleTask):
     def Execute(self):
         global launchCmd
         execCmd = ""
-        atleastOneFail = False
         for cmd in self.__cmds:
           execCmd += cmd
           execCmd += seperator
 
         execCmd = execCmd.rsplit(seperator, 1)[0]
-        print(launchCmd)
-        print(execCmd)
-        finalCmd = launchCmd.replace('{CMD1}', execCmd, 1)
-        
-        print("Using the command:{}".format(finalCmd))
-        subprocess.Popen(finalCmd, shell=True)
+        subprocess.call(execCmd, shell=True)
 
-        #ret = subprocess.Popen(execCmd)
-'''
-        ####################################################################
-        # Works but not recommended
-        ####################################################################
-        ret = os.system(execCmd)
-'''
-
-'''
-        ####################################################################
-        # Returns output only after the process has completed !!!
-        ####################################################################
-        process = subprocess.Popen(execCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, shell=True)
-        stdout, stderr = process.communicate()
-        return stdout.strip()
-'''
-'''
-        ####################################################################
-        # Blocks (nearly 100% of the time) when no output to read
-        ####################################################################
-        process = subprocess.Popen(execCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, shell=True)
-        while True:
-          line = process.stdout.readline()
-          if not line: break
-          else:
-            print(line)
-'''
-'''
-        ####################################################################
-        # Blocks (nearly 100% of the time) when no output to read
-        ####################################################################
-        process = subprocess.Popen(execCmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, shell=True)
-        cmdList = execCmd.split(" ")
-        cmdList = [idx for idx in cmdList if len(idx)>0]
-        print(cmdList)
-        console_op = subprocess.run(cmdList)
-'''
+        #finalCmd = launchCmd.replace('{CMD1}', execCmd, 1)
+        #subprocess.Popen(finalCmd, shell=True)
